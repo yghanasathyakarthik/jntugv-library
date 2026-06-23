@@ -124,6 +124,13 @@ export default function StudentPortal() {
  pingActive();
  const interval = setInterval(pingActive, 60000);
 
+ // Auto-refresh data every 10 seconds to ensure real-time sync with Librarian
+ const dataSyncInterval = setInterval(() => {
+ fetchNotifications();
+ fetchAppeals();
+ fetchReservations();
+ }, 10000);
+
  // Geofencing Ping
  const pingLocation = () => {
  if (navigator.geolocation) {
@@ -139,7 +146,7 @@ export default function StudentPortal() {
  pingLocation();
  const geoInterval = setInterval(pingLocation, 60000);
 
- return () => { clearInterval(interval); clearInterval(geoInterval); };
+ return () => { clearInterval(interval); clearInterval(geoInterval); clearInterval(dataSyncInterval); };
  }
  }, [user?.id]);
 
