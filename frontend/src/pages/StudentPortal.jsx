@@ -86,7 +86,7 @@ export default function StudentPortal() {
 
  const fetchNotifications = async () => {
  try {
- const res = await axios.get(`/api/notifications/user/${user.id}`);
+ const res = await axios.get(`/api/notifications/student/${user.id}`);
  setNotifications(res.data);
  } catch (err) { console.error(err); }
  };
