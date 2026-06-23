@@ -46,8 +46,8 @@ router.get('/', async (req, res) => {
             `),
             pool.query(`
                 WITH dates AS (
-                    SELECT current_date - i AS date
-                    FROM generate_series(0, 29) i
+                    SELECT (CURRENT_DATE - s.a) AS date
+                    FROM generate_series(0, 29) AS s(a)
                 )
                 SELECT 
                     TO_CHAR(d.date, 'DD Mon') as label,
