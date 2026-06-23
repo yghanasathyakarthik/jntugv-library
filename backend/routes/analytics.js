@@ -51,8 +51,8 @@ router.get('/', async (req, res) => {
                 )
                 SELECT 
                     TO_CHAR(d.date, 'DD Mon') as label,
-                    COUNT(i.log_id) as issued,
-                    COUNT(r.log_id) as returned
+                    COUNT(i.issuance_id) as issued,
+                    COUNT(r.issuance_id) as returned
                 FROM dates d
                 LEFT JOIN ISSUANCE_LOGS i ON DATE(i.issued_timestamp) = d.date
                 LEFT JOIN ISSUANCE_LOGS r ON DATE(r.actual_return_timestamp) = d.date
