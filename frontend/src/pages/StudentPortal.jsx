@@ -180,6 +180,7 @@ export default function StudentPortal() {
  });
  setAppealDescription('');
  fetchAppeals();
+ alert('Appeal submitted successfully!');
  } catch (err) {
  console.error(err);
  } finally {
