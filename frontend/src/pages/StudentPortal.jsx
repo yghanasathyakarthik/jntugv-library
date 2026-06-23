@@ -174,8 +174,8 @@ export default function StudentPortal() {
  setSubmittingAppeal(true);
  try {
  await axios.post('/api/appeals', {
- user_id: user.id,
- type: appealType,
+ student_id: user.id,
+ appeal_type: appealType,
  description: appealDescription
  });
  setAppealDescription('');
