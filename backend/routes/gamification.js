@@ -61,10 +61,14 @@ router.post('/ping-location', async (req, res) => {
 router.get('/leaderboard', async (req, res) => {
     try {
         const result = await pool.query(`
-            SELECT id, name, score, COALESCE(library_time_minutes, 0) as library_time_minutes
-            FROM USERS
-            WHERE role = 'student'
-            ORDER BY score DESC
+            SELECT u.id, u.name, u.score, COALESCE(u.library_time_minutes, 0) as library_time_minutes,
+                   COUNT(i.issuance_id) as total_issuances,
+                   COUNT(i.actual_return_timestamp) as total_returns
+            FROM USERS u
+            LEFT JOIN ISSUANCE_LOGS i ON u.barcode_id = i.user_identifier_string
+            WHERE u.role = 'student'
+            GROUP BY u.id
+            ORDER BY u.score DESC
             LIMIT 10
         `);
         const leaderboard = result.rows.map(user => ({

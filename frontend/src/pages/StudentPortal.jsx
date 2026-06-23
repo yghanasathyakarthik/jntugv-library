@@ -582,7 +582,7 @@ export default function StudentPortal() {
  <th className="py-5 px-8 font-black text-slate-400 text-[11px] uppercase tracking-widest w-24">Rank</th>
  <th className="py-5 px-8 font-black text-slate-400 text-[11px] uppercase tracking-widest">Student</th>
  <th className="py-5 px-8 font-black text-slate-400 text-[11px] uppercase tracking-widest">Badge</th>
- <th className="py-5 px-8 font-black text-slate-400 text-[11px] uppercase tracking-widest text-center">Library Time</th>
+ <th className="py-5 px-8 font-black text-slate-400 text-[11px] uppercase tracking-widest">Activity Breakdown</th>
  <th className="py-5 px-8 font-black text-slate-400 text-[11px] uppercase tracking-widest text-right">Total Score</th>
  </tr>
  </thead>
@@ -603,8 +603,12 @@ export default function StudentPortal() {
  <span className="text-[11px] font-bold text-indigo-600">{u.badge?.name}</span>
  </div>
  </td>
- <td className="py-5 px-8 text-center">
- <span className="font-bold text-slate-600">{u.library_time_minutes || 0} min</span>
+ <td className="py-5 px-8">
+ <div className="flex items-center gap-4">
+ <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md" title="Books Issued (+10 pts each)"><BookOpen className="w-3.5 h-3.5 text-blue-500"/> {u.total_issuances || 0}</span>
+ <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md" title="Books Returned (+20 pts each)"><CheckCircle className="w-3.5 h-3.5 text-emerald-500"/> {u.total_returns || 0}</span>
+ <span className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md" title="Time in Library (+1 pt/min)"><MapPin className="w-3.5 h-3.5 text-rose-500"/> {u.library_time_minutes || 0}m</span>
+ </div>
  </td>
  <td className="py-5 px-8 text-right">
  <span className="font-black text-slate-800 text-lg">{u.score}</span>
