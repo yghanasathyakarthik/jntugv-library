@@ -24,6 +24,7 @@ const reservationsRoutes = require('./routes/reservations');
 const notificationsRoutes = require('./routes/notifications');
 const aiRoutes = require('./routes/ai');
 const gamificationRoutes = require('./routes/gamification');
+const recommendationsRoutes = require('./routes/recommendations');
 const reviewsRoutes = require('./routes/reviews');
 
 app.use('/api/books', booksRoutes);
@@ -37,6 +38,7 @@ app.use('/api/reservations', reservationsRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/gamification', gamificationRoutes);
+app.use('/api/recommendations', recommendationsRoutes);
 app.use('/api/reviews', reviewsRoutes);
 
 app.listen(PORT, () => {

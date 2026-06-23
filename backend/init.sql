@@ -19,7 +19,10 @@ CREATE TABLE USERS (
     fines DECIMAL(10,2) DEFAULT 0.00,
     score INT DEFAULT 100,
     library_time_minutes INT DEFAULT 0,
-    last_active_at TIMESTAMP
+    last_active_at TIMESTAMP,
+    department VARCHAR(50),
+    roll_no VARCHAR(50) UNIQUE,
+    semester VARCHAR(50)
 );
 
 -- AUTHORS
@@ -49,7 +52,8 @@ CREATE TABLE BOOKS (
     status VARCHAR(20) DEFAULT 'Available', -- Available, Issued, Reserved, Missing
     borrow_count INT DEFAULT 0,
     author_id INT REFERENCES AUTHORS(author_id),
-    category_id INT REFERENCES CATEGORIES(category_id)
+    category_id INT REFERENCES CATEGORIES(category_id),
+    semester_tag VARCHAR(50)
 );
 
 -- PHYSICAL_LOCATIONS

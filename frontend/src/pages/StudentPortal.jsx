@@ -18,6 +18,7 @@ export default function StudentPortal() {
  const [loading, setLoading] = useState(false);
  const [gamification, setGamification] = useState({ score: 0, badge: { name: 'Reader', icon: '🥉' } });
  const [leaderboard, setLeaderboard] = useState([]);
+ const [departmentLeaderboard, setDepartmentLeaderboard] = useState([]);
  const [bookReviews, setBookReviews] = useState([]);
  const [showSpatialMap, setShowSpatialMap] = useState(false);
  const [newReviewText, setNewReviewText] = useState('');
@@ -42,9 +43,11 @@ export default function StudentPortal() {
  const [notifications, setNotifications] = useState([]);
  const [notificationsOpen, setNotificationsOpen] = useState(false);
  
+ // Syllabus
+ const [syllabusBooks, setSyllabusBooks] = useState([]);
 
-
- 
+ // Leaderboard tab state
+ const [leaderboardTab, setLeaderboardTab] = useState('individual');
 
  const fetchHistory = async () => {
  try {
@@ -97,13 +100,17 @@ export default function StudentPortal() {
  setGamification(res.data);
  const leadRes = await axios.get('/api/gamification/leaderboard');
  setLeaderboard(leadRes.data);
+ const deptRes = await axios.get('/api/gamification/leaderboard/departments');
+ setDepartmentLeaderboard(deptRes.data);
  } catch (err) { console.error(err); }
  };
 
  const fetchRecommendations = async () => {
  try {
- const res = await axios.get(`/api/recommendations/${user.id}`);
+ const res = await axios.get(`/api/ai/recommendations/${user.id}`);
  setRecommendations(res.data);
+ const syllabusRes = await axios.get(`/api/recommendations/syllabus/${user.id}`);
+ setSyllabusBooks(syllabusRes.data);
  } catch (err) { console.error(err); }
  };
 
@@ -215,6 +222,25 @@ export default function StudentPortal() {
  setNewReviewRating(5);
  // fetchReviews();
  } catch (err) { console.error(err); }
+ };
+
+ const [updateSemester, setUpdateSemester] = useState(user?.semester || '');
+ const [updatingProfile, setUpdatingProfile] = useState(false);
+
+ const handleUpdateProfile = async () => {
+   if (!updateSemester) return;
+   setUpdatingProfile(true);
+   try {
+     await axios.put(`/api/users/${user.id}/profile`, { semester: updateSemester });
+     alert('Academic profile updated! Your Syllabus Shelf will now reflect these changes.');
+     fetchStudentInfo();
+     fetchRecommendations();
+   } catch (err) {
+     console.error(err);
+     alert('Failed to update profile.');
+   } finally {
+     setUpdatingProfile(false);
+   }
  };
 
  const renderSidebar = () => (
@@ -535,8 +561,38 @@ export default function StudentPortal() {
  </div>
  </div>
 
+ {/* SYLLABUS SHELF */}
+ {syllabusBooks.length > 0 && (
+ <div className="flex flex-col mb-8">
+ <div className="flex items-center justify-between mb-4">
+ <div className="flex items-center gap-2">
+ <h3 className="text-[18px] font-black text-slate-800 ">🎓 Your Syllabus Textbooks</h3>
+ <span className="text-[11px] font-bold text-indigo-500 bg-indigo-50 px-2 py-0.5 rounded-md">{user?.department} • {user?.semester}</span>
+ </div>
+ </div>
+ <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
+ {syllabusBooks.map((book, i) => (
+ <div onClick={() => { setActiveTab('search'); setSearchTerm(book.title); }} key={book.book_id || i} className="bg-gradient-to-b from-indigo-500 to-purple-600 p-1 rounded-[24px] shadow-[0_8px_24px_rgba(99,102,241,0.2)] min-w-[280px] hover:-translate-y-1 transition-all cursor-pointer group">
+ <div className="bg-white h-full rounded-[20px] p-3 flex gap-3 relative overflow-hidden">
+ <div className={`w-[80px] h-[110px] rounded-xl bg-slate-100 shadow-inner flex items-center justify-center p-2 relative overflow-hidden group-hover:scale-105 transition-transform shrink-0`}>
+ <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-purple-600/20"></div>
+ <BookOpen className="w-8 h-8 text-indigo-400 relative z-10" />
+ </div>
+ <div className="flex flex-col justify-center py-1">
+ <h4 className="text-[14px] font-black text-slate-800 leading-tight mb-1 line-clamp-2">{book.title}</h4>
+ <p className="text-[11px] font-medium text-slate-500 mb-2">{book.author || 'Unknown'}</p>
+ <div className="mt-auto">
+ <span className={`inline-flex px-2 py-0.5 text-[9px] font-black rounded-full uppercase tracking-widest ${book.status === 'Available' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'}`}>{book.status}</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ ))}
+ </div>
+ </div>
+ )}
+
  {/* RECOMMENDED FOR YOU */}
- <div className="flex flex-col">
  <div className="flex items-center justify-between mb-4">
  <div className="flex items-center gap-2">
  <h3 className="text-[18px] font-black text-slate-800 ">Recommended for You</h3>
@@ -572,9 +628,19 @@ export default function StudentPortal() {
  <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[32px] p-8 text-white relative overflow-hidden shadow-[0_4px_24px_rgba(99,102,241,0.3)]">
  <div className="absolute right-0 top-0 w-64 h-64 bg-white rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
  <h2 className="text-3xl font-black mb-2 relative z-10">Library Leaderboard</h2>
- <p className="text-indigo-100 font-medium relative z-10 max-w-lg">Rank up by spending time studying in the library, and issuing or returning books. See how you compare to other students!</p>
+ <p className="text-indigo-100 font-medium relative z-10 max-w-lg">Rank up by spending time studying in the library, and issuing or returning books. Compete individually or as a Department!</p>
  </div>
 
+ <div className="flex bg-white p-1.5 rounded-[16px] border border-slate-100 mb-6 max-w-md">
+    <button type="button" onClick={() => setLeaderboardTab('individual')} className={`flex-1 py-3 text-sm font-bold transition-all rounded-[12px] flex items-center justify-center gap-2 ${leaderboardTab === 'individual' ? 'bg-indigo-50/50 text-indigo-600 shadow-sm border border-indigo-100/50' : 'text-slate-400 hover:text-slate-600'}`}>
+      <UserIcon className="w-4 h-4" /> Individual Rank
+    </button>
+    <button type="button" onClick={() => setLeaderboardTab('department')} className={`flex-1 py-3 text-sm font-bold transition-all rounded-[12px] flex items-center justify-center gap-2 ${leaderboardTab === 'department' ? 'bg-indigo-50/50 text-indigo-600 shadow-sm border border-indigo-100/50' : 'text-slate-400 hover:text-slate-600'}`}>
+      <Users className="w-4 h-4" /> Department Wars
+    </button>
+ </div>
+
+ {leaderboardTab === 'individual' ? (
  <div className="bg-white rounded-[32px] border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.02)] overflow-hidden">
  <table className="w-full text-left border-collapse">
  <thead>
@@ -623,6 +689,47 @@ export default function StudentPortal() {
  </tbody>
  </table>
  </div>
+ ) : (
+ <div className="bg-white rounded-[32px] border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.02)] overflow-hidden">
+ <table className="w-full text-left border-collapse">
+ <thead>
+ <tr className="bg-slate-50/50 border-b border-slate-100 ">
+ <th className="py-5 px-8 font-black text-slate-400 text-[11px] uppercase tracking-widest w-24">Rank</th>
+ <th className="py-5 px-8 font-black text-slate-400 text-[11px] uppercase tracking-widest">Department</th>
+ <th className="py-5 px-8 font-black text-slate-400 text-[11px] uppercase tracking-widest">Students Participating</th>
+ <th className="py-5 px-8 font-black text-slate-400 text-[11px] uppercase tracking-widest text-right">Total Score</th>
+ </tr>
+ </thead>
+ <tbody>
+ {departmentLeaderboard.map((d, i) => (
+ <tr key={d.department} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
+ <td className="py-5 px-8">
+ <div className={`w-8 h-8 rounded-full flex items-center justify-center font-black text-sm ${i === 0 ? 'bg-amber-100 text-amber-600' : i === 1 ? 'bg-slate-200 text-slate-600' : i === 2 ? 'bg-orange-100 text-orange-600' : 'bg-slate-50 text-slate-400'}`}>
+ #{i + 1}
+ </div>
+ </td>
+ <td className="py-5 px-8">
+ <span className="font-black text-slate-800 text-lg">{d.department}</span>
+ </td>
+ <td className="py-5 px-8">
+ <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 font-bold text-slate-500 text-[12px]">
+ <Users className="w-4 h-4" /> {d.student_count} Students
+ </span>
+ </td>
+ <td className="py-5 px-8 text-right">
+ <span className="font-black text-slate-800 text-2xl">{d.total_score}</span>
+ </td>
+ </tr>
+ ))}
+ {departmentLeaderboard.length === 0 && (
+ <tr>
+ <td colSpan="4" className="py-12 text-center text-slate-500 font-medium">No department data available yet.</td>
+ </tr>
+ )}
+ </tbody>
+ </table>
+ </div>
+ )}
  </div>
  )}
 
@@ -1256,6 +1363,40 @@ export default function StudentPortal() {
  <p className="text-xs font-black text-slate-600 mt-5 tracking-widest uppercase bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">{studentInfo?.barcode_id || user?.barcode_id || user?.name}</p>
  </div>
  </div>
+
+ <div className="mt-8 bg-white p-8 rounded-[32px] border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
+ <h3 className="text-xl font-black text-slate-800 mb-6">Academic Profile</h3>
+ <div className="flex flex-col md:flex-row gap-6 items-end">
+   <div className="flex-1 w-full space-y-1.5">
+     <label className="block text-[13px] font-bold text-slate-800">Current Department</label>
+     <div className="w-full bg-slate-50 border border-[#e2e8f0] rounded-[14px] py-3.5 px-4 text-sm font-medium text-slate-500 cursor-not-allowed">
+       {studentInfo?.department || user?.department || 'Not Set'}
+     </div>
+   </div>
+   <div className="flex-1 w-full space-y-1.5">
+     <label className="block text-[13px] font-bold text-slate-800">Current Semester</label>
+     <select 
+       className="w-full bg-white border border-[#e2e8f0] rounded-[14px] py-3.5 px-4 text-sm font-medium focus:ring-2 focus:ring-[#9073fd]/20 focus:border-[#9073fd] transition-all outline-none text-slate-700" 
+       value={updateSemester} 
+       onChange={(e) => setUpdateSemester(e.target.value)} 
+     >
+       <option value="" disabled>Select Semester</option>
+       <option value="Year 1 Sem 1">Year 1 Sem 1</option>
+       <option value="Year 1 Sem 2">Year 1 Sem 2</option>
+       <option value="Year 2 Sem 1">Year 2 Sem 1</option>
+       <option value="Year 2 Sem 2">Year 2 Sem 2</option>
+       <option value="Year 3 Sem 1">Year 3 Sem 1</option>
+       <option value="Year 3 Sem 2">Year 3 Sem 2</option>
+       <option value="Year 4 Sem 1">Year 4 Sem 1</option>
+       <option value="Year 4 Sem 2">Year 4 Sem 2</option>
+     </select>
+   </div>
+   <button onClick={handleUpdateProfile} disabled={updatingProfile || !updateSemester || updateSemester === (studentInfo?.semester || user?.semester)} className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold py-3.5 px-8 rounded-[14px] shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2">
+     {updatingProfile ? 'Updating...' : 'Update Semester'}
+   </button>
+ </div>
+ </div>
+
  </div>
  )}
 

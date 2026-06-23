@@ -8,6 +8,9 @@ export default function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [department, setDepartment] = useState('');
+  const [rollNo, setRollNo] = useState('');
+  const [semester, setSemester] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -19,7 +22,15 @@ export default function Register() {
     setError('');
     setIsLoading(true);
     try {
-      const res = await axios.post('/api/auth/register', { name, email, password, role: 'student' });
+      const res = await axios.post('/api/auth/register', { 
+        name, 
+        email, 
+        password, 
+        role: 'student',
+        department,
+        roll_no: rollNo,
+        semester
+      });
       login(res.data.user, res.data.token);
       navigate('/student');
     } catch (err) {
@@ -86,6 +97,62 @@ export default function Register() {
                      placeholder="id@jntugv.edu.in"
                      value={email} 
                      onChange={(e) => setEmail(e.target.value)} 
+                     required 
+                   />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="block text-[13px] font-bold text-slate-800">Department</label>
+                  <select 
+                    className="w-full bg-white border border-[#e2e8f0] rounded-[14px] py-3.5 px-4 text-sm font-medium focus:ring-2 focus:ring-[#9073fd]/20 focus:border-[#9073fd] transition-all outline-none text-slate-700 appearance-none" 
+                    value={department} 
+                    onChange={(e) => setDepartment(e.target.value)} 
+                    required 
+                  >
+                    <option value="" disabled>Select Department</option>
+                    <option value="CSE">Computer Science (CSE)</option>
+                    <option value="ECE">Electronics (ECE)</option>
+                    <option value="MECH">Mechanical (MECH)</option>
+                    <option value="CIVIL">Civil (CIVIL)</option>
+                    <option value="IT">Information Tech (IT)</option>
+                  </select>
+                </div>
+                
+                <div className="space-y-1.5">
+                  <label className="block text-[13px] font-bold text-slate-800">Semester</label>
+                  <select 
+                    className="w-full bg-white border border-[#e2e8f0] rounded-[14px] py-3.5 px-4 text-sm font-medium focus:ring-2 focus:ring-[#9073fd]/20 focus:border-[#9073fd] transition-all outline-none text-slate-700 appearance-none" 
+                    value={semester} 
+                    onChange={(e) => setSemester(e.target.value)} 
+                    required 
+                  >
+                    <option value="" disabled>Select Semester</option>
+                    <option value="Year 1 Sem 1">Year 1 Sem 1</option>
+                    <option value="Year 1 Sem 2">Year 1 Sem 2</option>
+                    <option value="Year 2 Sem 1">Year 2 Sem 1</option>
+                    <option value="Year 2 Sem 2">Year 2 Sem 2</option>
+                    <option value="Year 3 Sem 1">Year 3 Sem 1</option>
+                    <option value="Year 3 Sem 2">Year 3 Sem 2</option>
+                    <option value="Year 4 Sem 1">Year 4 Sem 1</option>
+                    <option value="Year 4 Sem 2">Year 4 Sem 2</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-[13px] font-bold text-slate-800">Roll Number</label>
+                <div className="relative">
+                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                     <User className="h-4 w-4 text-indigo-400" />
+                   </div>
+                   <input 
+                     type="text" 
+                     className="w-full bg-white border border-[#e2e8f0] rounded-[14px] py-3.5 pl-11 pr-4 text-sm font-medium focus:ring-2 focus:ring-[#9073fd]/20 focus:border-[#9073fd] transition-all outline-none text-slate-700 placeholder-slate-400 uppercase" 
+                     placeholder="e.g. 21X41A0501"
+                     value={rollNo} 
+                     onChange={(e) => setRollNo(e.target.value)} 
                      required 
                    />
                 </div>

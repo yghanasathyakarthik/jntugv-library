@@ -103,4 +103,20 @@ router.post('/:id/ping', async (req, res) => {
     }
 });
 
+// User: Update profile (semester)
+router.put('/:id/profile', async (req, res) => {
+    try {
+        const { semester } = req.body;
+        const result = await pool.query(
+            "UPDATE USERS SET semester = $1 WHERE id = $2 RETURNING id, name, email, role, barcode_id, department, roll_no, semester",
+            [semester, req.params.id]
+        );
+        if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+        res.json({ message: 'Profile updated successfully!', user: result.rows[0] });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Server error updating profile' });
+    }
+});
+
 module.exports = router;

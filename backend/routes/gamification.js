@@ -81,6 +81,23 @@ router.get('/leaderboard', async (req, res) => {
     }
 });
 
+// GET /api/gamification/leaderboard/departments
+router.get('/leaderboard/departments', async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT department, SUM(score) as total_score, COUNT(id) as student_count
+            FROM USERS
+            WHERE role = 'student' AND department IS NOT NULL
+            GROUP BY department
+            ORDER BY total_score DESC
+        `);
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Failed to fetch department leaderboard' });
+    }
+});
+
 // GET /api/gamification/user/:userId
 router.get('/user/:userId', async (req, res) => {
     try {
