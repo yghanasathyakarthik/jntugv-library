@@ -109,5 +109,24 @@ router.get('/user/:userId', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch user score' });
     }
 });
+// POST /api/gamification/focus-session
+router.post('/focus-session', async (req, res) => {
+    try {
+        const { userId, minutes } = req.body;
+        // 50 points per 25-minute session
+        const points = Math.floor(minutes / 25) * 50;
+        if (points > 0) {
+            await pool.query(`
+                UPDATE USERS 
+                SET score = COALESCE(score, 0) + $1 
+                WHERE id = $2
+            `, [points, userId]);
+        }
+        res.json({ message: 'Focus session logged!', pointsAwarded: points });
+    } catch (err) {
+        console.error("Focus Session Error:", err);
+        res.status(500).json({ error: 'Failed to log focus session' });
+    }
+});
 
 module.exports = router;

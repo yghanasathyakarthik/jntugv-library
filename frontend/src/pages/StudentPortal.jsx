@@ -6,6 +6,9 @@ import { AuthContext } from '../context/AuthContext';
 import Scanner from '../components/Scanner';
 import LibraryAssistant from '../components/LibraryAssistant';
 import SpatialMap from '../components/SpatialMap';
+import FocusTimer from '../components/FocusTimer';
+import StudySpaces from '../components/StudySpaces';
+import SwipeBooks from '../components/SwipeBooks';
 
 export default function StudentPortal() {
  const { user, logout } = useContext(AuthContext);
@@ -48,6 +51,9 @@ export default function StudentPortal() {
 
  // Leaderboard tab state
  const [leaderboardTab, setLeaderboardTab] = useState('individual');
+
+ // Study Groups
+ const [studyGroups, setStudyGroups] = useState([]);
 
  const fetchHistory = async () => {
  try {
@@ -114,6 +120,13 @@ export default function StudentPortal() {
  } catch (err) { console.error(err); }
  };
 
+ const fetchStudyGroups = async () => {
+ try {
+ const res = await axios.get(`/api/users/matchmaking/${user.id}`);
+ setStudyGroups(res.data);
+ } catch (err) { console.error(err); }
+ };
+
  useEffect(() => {
  fetchHistory();
  fetchStudentInfo();
@@ -125,6 +138,7 @@ export default function StudentPortal() {
  fetchNotifications();
  fetchGamification();
  fetchRecommendations();
+ fetchStudyGroups();
  
  // Ping immediately, then every 60 seconds
  const pingActive = () => axios.post(`/api/users/${user.id}/ping`).catch(console.error);
@@ -270,6 +284,14 @@ export default function StudentPortal() {
 
  <button onClick={() => {setActiveTab('leaderboard'); fetchGamification();}} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'leaderboard' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
  <Trophy className="w-[18px] h-[18px]" /> Leaderboard
+ </button>
+
+ <button onClick={() => setActiveTab('spaces')} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'spaces' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
+ <Map className="w-[18px] h-[18px]" /> Study Spaces
+ </button>
+
+ <button onClick={() => setActiveTab('discover')} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'discover' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
+ <Sparkles className="w-[18px] h-[18px]" /> Discover Books
  </button>
 
  <button onClick={() => setActiveTab('profile')} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'profile' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
@@ -472,6 +494,42 @@ export default function StudentPortal() {
  </svg>
  </div>
  ))}
+ </div>
+
+ {/* FOCUS TIMER & STUDY GROUPS */}
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <FocusTimer />
+  
+  {/* STUDY GROUPS */}
+  <div className="bg-white rounded-[24px] p-6 shadow-sm border border-slate-100 flex flex-col">
+    <div className="flex items-center gap-3 mb-6">
+      <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
+        <Users className="w-5 h-5 text-indigo-600" />
+      </div>
+      <div>
+        <h3 className="text-lg font-black text-slate-800 leading-tight">Peer Matchmaking</h3>
+        <p className="text-[11px] font-bold text-slate-500">Students in {studentInfo?.department}</p>
+      </div>
+    </div>
+    
+    <div className="flex-1 space-y-3 overflow-y-auto pr-2 custom-scrollbar max-h-[220px]">
+      {studyGroups.map(peer => (
+        <div key={peer.id} className="flex items-center justify-between bg-slate-50 p-3 rounded-2xl hover:bg-slate-100 transition-colors">
+          <div className="flex items-center gap-3">
+            <img src={peer.profile_photo || 'https://via.placeholder.com/150'} alt="peer" className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm" />
+            <div>
+              <p className="text-sm font-black text-slate-800">{peer.name}</p>
+              <p className="text-[10px] font-bold text-slate-500">{peer.semester}</p>
+            </div>
+          </div>
+          <button className="bg-white text-indigo-600 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-indigo-50 transition-colors">
+            Connect
+          </button>
+        </div>
+      ))}
+      {studyGroups.length === 0 && <p className="text-xs font-medium text-slate-500 text-center py-4">No peers found in your department.</p>}
+    </div>
+  </div>
  </div>
 
  {/* READING ACTIVITY & POPULAR CATEGORIES */}
@@ -1479,6 +1537,20 @@ export default function StudentPortal() {
  </div>
  </div>
 )}
+
+  {/* SPACES TAB */}
+  {activeTab === 'spaces' && (
+    <div className="h-full">
+      <StudySpaces />
+    </div>
+  )}
+
+  {/* DISCOVER TAB */}
+  {activeTab === 'discover' && (
+    <div className="h-full">
+      <SwipeBooks />
+    </div>
+  )}
 
  <LibraryAssistant />
  </>

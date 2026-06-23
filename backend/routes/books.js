@@ -168,3 +168,42 @@ router.put('/:id', async (req, res) => {
         res.status(500).json({ error: 'Failed to update book details' });
     }
 });
+// Tinder for Books: Discover unseen books
+router.get('/discover/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const result = await pool.query(`
+            SELECT b.book_id, b.title, a.first_name || ' ' || a.last_name as author, c.name_slug as category
+            FROM BOOKS b
+            LEFT JOIN AUTHORS a ON b.author_id = a.author_id
+            LEFT JOIN CATEGORIES c ON b.category_id = c.category_id
+            WHERE b.book_id NOT IN (
+                SELECT book_id FROM BOOK_SWIPES WHERE user_id = $1
+            )
+            ORDER BY RANDOM()
+            LIMIT 10
+        `, [userId]);
+        res.json(result.rows);
+    } catch (err) {
+        console.error("Discovery Error:", err);
+        res.status(500).json({ error: 'Failed to fetch books for discovery' });
+    }
+});
+
+// Tinder for Books: Swipe action
+router.post('/swipe', async (req, res) => {
+    try {
+        const { userId, bookId, action } = req.body;
+        await pool.query(`
+            INSERT INTO BOOK_SWIPES (user_id, book_id, action) 
+            VALUES ($1, $2, $3)
+            ON CONFLICT (user_id, book_id) DO UPDATE SET action = $3, created_at = CURRENT_TIMESTAMP
+        `, [userId, bookId, action]);
+        res.json({ message: 'Swipe recorded!' });
+    } catch (err) {
+        console.error("Swipe Error:", err);
+        res.status(500).json({ error: 'Failed to record swipe' });
+    }
+});
+
+module.exports = router;

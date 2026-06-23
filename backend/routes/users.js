@@ -118,5 +118,30 @@ router.put('/:id/profile', async (req, res) => {
         res.status(500).json({ error: 'Server error updating profile' });
     }
 });
+// Matchmaking: Find study groups based on department/semester
+router.get('/matchmaking/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const userRes = await pool.query("SELECT department, semester FROM USERS WHERE id = $1", [userId]);
+        if (userRes.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+        
+        const { department, semester } = userRes.rows[0];
+        if (!department) return res.json([]);
+
+        // Find users in the same department
+        const peers = await pool.query(`
+            SELECT id, name, department, semester, score, profile_photo 
+            FROM USERS 
+            WHERE department = $1 AND role = 'student' AND id != $2
+            ORDER BY (CASE WHEN semester = $3 THEN 1 ELSE 0 END) DESC, score DESC
+            LIMIT 5
+        `, [department, userId, semester]);
+        
+        res.json(peers.rows);
+    } catch (err) {
+        console.error("Matchmaking Error:", err);
+        res.status(500).json({ error: 'Server error during matchmaking' });
+    }
+});
 
 module.exports = router;

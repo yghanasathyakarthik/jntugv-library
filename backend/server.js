@@ -26,6 +26,7 @@ const aiRoutes = require('./routes/ai');
 const gamificationRoutes = require('./routes/gamification');
 const recommendationsRoutes = require('./routes/recommendations');
 const reviewsRoutes = require('./routes/reviews');
+const spacesRoutes = require('./routes/spaces');
 
 app.use('/api/books', booksRoutes);
 app.use('/api/analytics', analyticsRoutes);
@@ -40,6 +41,7 @@ app.use('/api/ai', aiRoutes);
 app.use('/api/gamification', gamificationRoutes);
 app.use('/api/recommendations', recommendationsRoutes);
 app.use('/api/reviews', reviewsRoutes);
+app.use('/api/spaces', spacesRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

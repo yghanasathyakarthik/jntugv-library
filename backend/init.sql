@@ -132,3 +132,35 @@ INSERT INTO ISSUANCE_LOGS (asset_id, user_identifier_string, expected_return_dat
 
 INSERT INTO INVENTORY_AUDITS (asset_id, librarian_id, condition_status) VALUES 
 ('AST-1001', 2, 'pristine');
+
+-- STUDY_SEATS
+CREATE TABLE IF NOT EXISTS STUDY_SEATS (
+    seat_id VARCHAR(50) PRIMARY KEY,
+    zone VARCHAR(50),
+    status VARCHAR(20) DEFAULT 'available', -- available, occupied
+    occupied_by VARCHAR(50) REFERENCES USERS(barcode_id) ON DELETE SET NULL,
+    last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- BOOK_SWIPES (Tinder for Books)
+CREATE TABLE IF NOT EXISTS BOOK_SWIPES (
+    swipe_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES USERS(id) ON DELETE CASCADE,
+    book_id VARCHAR(20) REFERENCES BOOKS(book_id) ON DELETE CASCADE,
+    action VARCHAR(20) NOT NULL, -- 'like' or 'pass'
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(user_id, book_id)
+);
+
+-- Insert demo seats
+INSERT INTO STUDY_SEATS (seat_id, zone, status) VALUES 
+('QuietZone-A1', 'Quiet Zone', 'available'),
+('QuietZone-A2', 'Quiet Zone', 'available'),
+('QuietZone-A3', 'Quiet Zone', 'available'),
+('QuietZone-A4', 'Quiet Zone', 'available'),
+('Collab-B1', 'Collaboration Space', 'available'),
+('Collab-B2', 'Collaboration Space', 'available'),
+('Collab-B3', 'Collaboration Space', 'available'),
+('Collab-B4', 'Collaboration Space', 'available'),
+('FocusPod-C1', 'Focus Pods', 'available'),
+('FocusPod-C2', 'Focus Pods', 'available');
