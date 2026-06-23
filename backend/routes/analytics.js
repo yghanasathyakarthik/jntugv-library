@@ -4,7 +4,7 @@ const pool = require('../db');
 
 router.get('/', async (req, res) => {
     try {
-        const [booksRes, catRes, popRes, auditRes, liveRes, transactingRes] = await Promise.all([
+        const [booksRes, catRes, popRes, auditRes, liveRes, transactingRes, issuanceStats] = await Promise.all([
             pool.query(`
                 SELECT 
                     COUNT(*) as total,
@@ -43,6 +43,21 @@ router.get('/', async (req, res) => {
                 FROM ISSUANCE_LOGS
                 WHERE DATE(issued_timestamp) = CURRENT_DATE 
                    OR DATE(actual_return_timestamp) = CURRENT_DATE
+            `),
+            pool.query(`
+                WITH dates AS (
+                    SELECT current_date - i AS date
+                    FROM generate_series(0, 29) i
+                )
+                SELECT 
+                    TO_CHAR(d.date, 'DD Mon') as label,
+                    COUNT(i.log_id) as issued,
+                    COUNT(r.log_id) as returned
+                FROM dates d
+                LEFT JOIN ISSUANCE_LOGS i ON DATE(i.issued_timestamp) = d.date
+                LEFT JOIN ISSUANCE_LOGS r ON DATE(r.actual_return_timestamp) = d.date
+                GROUP BY d.date
+                ORDER BY d.date ASC
             `)
         ]);
 
@@ -55,7 +70,8 @@ router.get('/', async (req, res) => {
             mostStudiedBooks: popRes.rows.map(r => ({ title: r.title, count: parseInt(r.borrow_count) })),
             stockIssues: auditRes.rows,
             liveUsers: parseInt(liveRes.rows[0].live_users) || 0,
-            transactingUsers: parseInt(transactingRes.rows[0].transacting_users) || 0
+            transactingUsers: parseInt(transactingRes.rows[0].transacting_users) || 0,
+            monthlyIssuance: issuanceStats.rows
         });
     } catch (err) {
         console.error(err);

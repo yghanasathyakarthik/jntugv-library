@@ -389,11 +389,11 @@ export default function LibrarianPortal() {
   );
 
   const lineData = {
-    labels: ['1 May', '8 May', '15 May', '22 May', '29 May'],
+    labels: stats?.monthlyIssuance?.map(d => d.label) || ['1 May', '8 May', '15 May', '22 May', '29 May'],
     datasets: [
       {
         label: 'Issued',
-        data: [120, 190, 170, 240, 280],
+        data: stats?.monthlyIssuance?.map(d => d.issued) || [120, 190, 170, 240, 280],
         borderColor: '#3b82f6',
         backgroundColor: 'rgba(59, 130, 246, 0.1)',
         tension: 0.4,
@@ -401,7 +401,7 @@ export default function LibrarianPortal() {
       },
       {
         label: 'Returned',
-        data: [100, 160, 140, 210, 250],
+        data: stats?.monthlyIssuance?.map(d => d.returned) || [100, 160, 140, 210, 250],
         borderColor: '#10b981',
         backgroundColor: 'rgba(16, 185, 129, 0.1)',
         tension: 0.4,
@@ -411,10 +411,10 @@ export default function LibrarianPortal() {
   };
 
   const statusData = {
-    labels: ['Computer Science', 'Electronics & Comm.', 'Mechanical', 'Civil'],
+    labels: stats?.popularCategories?.map(c => c.name) || ['Computer Science', 'Electronics & Comm.', 'Mechanical', 'Civil'],
     datasets: [{
-      data: [45, 25, 15, 15],
-      backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#3b82f6'],
+      data: stats?.popularCategories?.map(c => c.count) || [45, 25, 15, 15],
+      backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899', '#14b8a6', '#f43f5e'],
       borderWidth: 0,
       hoverOffset: 4
     }]
@@ -494,6 +494,56 @@ export default function LibrarianPortal() {
                   </div>
                   <div className="w-full max-w-[200px] flex-1 flex items-center justify-center">
                     <Doughnut data={statusData} options={{ plugins: { legend: { position: 'bottom' } }, cutout: '75%' }} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Live Widgets Row */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Most Borrowed Books */}
+                <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-100 p-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                      <BookOpen className="w-4 h-4 text-blue-600"/>
+                    </div>
+                    <h3 className="text-sm font-black text-slate-800">Most Borrowed Books</h3>
+                  </div>
+                  <div className="space-y-4">
+                    {stats?.mostStudiedBooks?.map((book, i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-xs font-black text-slate-300 w-4">{i + 1}</span>
+                          <span className="text-sm font-bold text-slate-700">{book.title}</span>
+                        </div>
+                        <span className="text-xs font-black bg-blue-50 text-blue-600 px-2 py-1 rounded-md">{book.count} Borrows</span>
+                      </div>
+                    ))}
+                    {(!stats?.mostStudiedBooks || stats.mostStudiedBooks.length === 0) && (
+                      <p className="text-sm text-slate-400 font-medium">No borrow data available.</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Inventory Alerts */}
+                <div className="bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.02)] border border-slate-100 p-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
+                      <ShieldAlert className="w-4 h-4 text-rose-600"/>
+                    </div>
+                    <h3 className="text-sm font-black text-slate-800">Recent Inventory Audits</h3>
+                  </div>
+                  <div className="space-y-4">
+                    {stats?.stockIssues?.map((issue, i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <span className="text-sm font-bold text-slate-700 truncate pr-4">{issue.title}</span>
+                        <span className={`text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-wider shrink-0 ${issue.condition_status === 'Poor' || issue.condition_status === 'Lost' ? 'bg-rose-50 text-rose-600' : 'bg-amber-50 text-amber-600'}`}>
+                          {issue.condition_status}
+                        </span>
+                      </div>
+                    ))}
+                    {(!stats?.stockIssues || stats.stockIssues.length === 0) && (
+                      <p className="text-sm text-slate-400 font-medium">All inventory items are in good condition.</p>
+                    )}
                   </div>
                 </div>
               </div>
