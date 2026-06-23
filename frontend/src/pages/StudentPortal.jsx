@@ -618,7 +618,6 @@ export default function StudentPortal() {
  </div>
  </div>
 
- </div>
  )}
 
  
