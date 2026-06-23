@@ -17,7 +17,9 @@ CREATE TABLE USERS (
     role VARCHAR(20) NOT NULL DEFAULT 'student',
     barcode_id VARCHAR(50) UNIQUE, -- e.g. STU-1001
     fines DECIMAL(10,2) DEFAULT 0.00,
-    score INT DEFAULT 100
+    score INT DEFAULT 100,
+    library_time_minutes INT DEFAULT 0,
+    last_active_at TIMESTAMP
 );
 
 -- AUTHORS
