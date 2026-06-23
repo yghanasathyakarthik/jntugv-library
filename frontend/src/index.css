@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #f4f7fb; /* Very soft light blue/gray */
+  --color-surface: #ffffff;
+  --color-primary: #1e3a8a; /* Deep JNTUGV Navy */
+  --color-secondary: #f59e0b; /* Amber/Gold */
+  --color-textMain: #1e293b;
+  --color-textMuted: #64748b;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+body {
+  @apply text-slate-800 font-sans antialiased;
+  background: 
+    radial-gradient(circle at 15% 50%, rgba(255, 230, 240, 0.8), transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(220, 240, 255, 0.8), transparent 50%),
+    radial-gradient(circle at 50% 80%, rgba(235, 225, 255, 0.8), transparent 50%),
+    radial-gradient(circle at 50% 10%, rgba(240, 255, 240, 0.8), transparent 50%),
+    #f8fafc;
+  background-size: 200% 200%;
+  animation: pastelPulse 15s ease infinite;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+@keyframes pastelPulse {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.input-premium {
+  @apply w-full bg-white border border-slate-200 rounded-sm px-5 py-3.5 text-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary shadow-sm transition-all;
+}
+
+.btn-primary {
+  @apply bg-primary hover:bg-blue-800 text-white font-bold text-lg py-3.5 px-8 rounded-sm shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200;
+}
+
+.btn-secondary {
+  @apply bg-white border-2 border-primary text-primary hover:bg-primary/5 font-bold text-lg py-3 px-8 rounded-sm shadow-sm transition-all duration-200;
+}
+
+/* Ultra clean light header */
+.jntu-header {
+  @apply bg-white shadow-md border-b-4 border-secondary py-4 px-6 mb-8 sticky top-0 z-50;
+}
+
+.jntu-header-title {
+  @apply text-3xl font-extrabold text-primary tracking-tight;
+}
+
+.jntu-header-subtitle {
+  @apply text-sm text-slate-500 font-bold tracking-widest uppercase mt-1;
+}
+
