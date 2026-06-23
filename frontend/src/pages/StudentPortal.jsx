@@ -1457,7 +1457,21 @@ export default function StudentPortal() {
  </div>
  )}
 
- </main>
+  {/* SPACES TAB */}
+  {activeTab === 'spaces' && (
+    <div className="h-full">
+      <StudySpaces />
+    </div>
+  )}
+
+  {/* DISCOVER TAB */}
+  {activeTab === 'discover' && (
+    <div className="h-full flex items-center justify-center">
+      <SwipeBooks />
+    </div>
+  )}
+
+  </main>
  </div>
 
  {/* RIGHT SIDEBAR (WIDGETS) */}
@@ -1538,19 +1552,6 @@ export default function StudentPortal() {
  </div>
 )}
 
-  {/* SPACES TAB */}
-  {activeTab === 'spaces' && (
-    <div className="h-full">
-      <StudySpaces />
-    </div>
-  )}
-
-  {/* DISCOVER TAB */}
-  {activeTab === 'discover' && (
-    <div className="h-full">
-      <SwipeBooks />
-    </div>
-  )}
 
  <LibraryAssistant />
  </>
