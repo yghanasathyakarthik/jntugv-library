@@ -8,6 +8,7 @@ export default function SwipeBooks() {
   const { user } = useAuth();
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     fetchDiscoverBooks();
@@ -20,6 +21,7 @@ export default function SwipeBooks() {
       setBooks(res.data);
     } catch (err) {
       console.error(err);
+      setErrorMsg(err.response?.data?.error || err.message || "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -50,6 +52,13 @@ export default function SwipeBooks() {
   };
 
   if (loading && books.length === 0) return <div className="p-8 text-center text-slate-500 font-medium">Finding new books for you...</div>;
+
+  if (errorMsg) return (
+    <div className="flex flex-col items-center justify-center h-full p-8 text-center">
+      <div className="text-red-500 font-bold mb-2">Error Loading Books</div>
+      <div className="text-slate-600 bg-red-50 p-4 rounded border border-red-200 font-mono text-xs max-w-full overflow-x-auto">{errorMsg}</div>
+    </div>
+  );
 
   if (books.length === 0) return (
     <div className="flex flex-col items-center justify-center h-full p-8 text-center text-slate-500">
