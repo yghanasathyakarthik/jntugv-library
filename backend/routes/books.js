@@ -186,7 +186,7 @@ router.get('/discover/:userId', async (req, res) => {
         res.json(result.rows);
     } catch (err) {
         console.error("Discovery Error:", err);
-        res.status(500).json({ error: 'Failed to fetch books for discovery' });
+        res.status(500).json({ error: 'Failed to fetch books for discovery: ' + err.message });
     }
 });
 

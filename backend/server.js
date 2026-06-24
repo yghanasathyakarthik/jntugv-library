@@ -75,12 +75,14 @@ app.listen(PORT, async () => {
             CREATE TABLE IF NOT EXISTS book_swipes (
                 id SERIAL PRIMARY KEY,
                 user_id INTEGER,
-                book_id INTEGER,
+                book_id VARCHAR(50),
                 action VARCHAR(20),
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE(user_id, book_id)
             );
         `);
+        // Force alter just in case it was created with INTEGER
+        await pool.query(`ALTER TABLE book_swipes ALTER COLUMN book_id TYPE VARCHAR(50);`).catch(() => {});
         console.log("Database tables verified/created.");
     } catch (e) {
         console.error("Failed to init tables:", e.message);
