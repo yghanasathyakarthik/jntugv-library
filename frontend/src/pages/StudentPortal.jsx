@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { Search, MapPin, Map, Navigation, QrCode, Bookmark, BookOpen, Clock, AlertTriangle, Trophy, Download, CheckCircle, CreditCard, Sparkles, User as UserIcon, Users, LayoutDashboard, Search as SearchIcon, BookCopy, Calendar, Bell, Settings, LogOut, ChevronRight, Check, MessageSquare, Send, History, Barcode, Camera, Zap, Keyboard, XCircle, AlertCircle, ChevronDown, Library, Scan, Bot, Moon, MoreHorizontal, Briefcase, Laptop } from 'lucide-react';
+import { Search, MapPin, Map, Navigation, QrCode, Bookmark, BookOpen, Clock, AlertTriangle, Trophy, Download, CheckCircle, CreditCard, Sparkles, User as UserIcon, Users, LayoutDashboard, Search as SearchIcon, BookCopy, Calendar, Bell, Settings, LogOut, ChevronRight, Check, MessageSquare, Send, History, Barcode, Camera, Zap, Keyboard, XCircle, AlertCircle, ChevronDown, Library, Scan, Bot, Moon, MoreHorizontal, Briefcase, Laptop, Flame } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { AuthContext } from '../context/AuthContext';
 import Scanner from '../components/Scanner';
