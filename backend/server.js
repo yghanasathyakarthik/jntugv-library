@@ -43,6 +43,47 @@ app.use('/api/recommendations', recommendationsRoutes);
 app.use('/api/reviews', reviewsRoutes);
 app.use('/api/spaces', spacesRoutes);
 
-app.listen(PORT, () => {
+const pool = require('./db');
+app.listen(PORT, async () => {
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS study_seats (
+                seat_id VARCHAR(50) PRIMARY KEY,
+                zone VARCHAR(50),
+                status VARCHAR(20) DEFAULT 'available',
+                occupied_by VARCHAR(50),
+                last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
+        const count = await pool.query(`SELECT count(*) FROM study_seats`);
+        if (parseInt(count.rows[0].count) === 0) {
+            const zones = [
+                { name: 'Quiet Zone', prefix: 'QuietZone-A', count: 4 },
+                { name: 'Collaboration Space', prefix: 'Collab-B', count: 4 },
+                { name: 'Focus Pods', prefix: 'FocusPod-C', count: 2 }
+            ];
+            for (const zone of zones) {
+                for (let i = 1; i <= zone.count; i++) {
+                    await pool.query(
+                        `INSERT INTO study_seats (seat_id, zone, status) VALUES ($1, $2, 'available')`,
+                        [`${zone.prefix}${i}`, zone.name]
+                    );
+                }
+            }
+        }
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS book_swipes (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER,
+                book_id INTEGER,
+                action VARCHAR(20),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(user_id, book_id)
+            );
+        `);
+        console.log("Database tables verified/created.");
+    } catch (e) {
+        console.error("Failed to init tables:", e.message);
+    }
     console.log(`Server running on port ${PORT}`);
 });

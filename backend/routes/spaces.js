@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
         res.json(result.rows);
     } catch (err) {
         console.error("Spaces GET Error:", err);
-        res.status(500).json({ error: 'Failed to fetch study spaces' });
+        res.status(500).json({ error: 'Failed to fetch study spaces: ' + err.message });
     }
 });
 
