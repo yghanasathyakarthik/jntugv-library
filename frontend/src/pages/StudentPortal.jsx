@@ -1399,11 +1399,15 @@ export default function StudentPortal() {
  </div>
  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-inner">
  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">EMAIL ADDRESS</p>
- <p className="font-bold text-slate-700 truncate">{user?.name}@sdbms.edu</p>
+ <p className="font-bold text-slate-700 truncate">{studentInfo?.email || user?.email}</p>
  </div>
- <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-inner col-span-2 lg:col-span-2">
+ <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-inner">
+ <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">ROLL NO</p>
+ <p className="font-bold text-slate-700 truncate">{studentInfo?.roll_no || user?.roll_no || 'N/A'}</p>
+ </div>
+ <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-inner">
  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">INSTITUTION</p>
- <p className="font-bold text-slate-700">SDLBMS Engineering Academy</p>
+ <p className="font-bold text-slate-700 truncate">JNTUGV CEV Vizianagaram</p>
  </div>
  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-inner">
  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">STATUS</p>
