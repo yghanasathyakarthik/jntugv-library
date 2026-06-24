@@ -7,6 +7,7 @@ export default function StudySpaces() {
   const { user } = useAuth();
   const [seats, setSeats] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     fetchSeats();
@@ -18,6 +19,7 @@ export default function StudySpaces() {
       setSeats(res.data);
     } catch (err) {
       console.error(err);
+      setErrorMsg(err.response?.data?.error || err.message || "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -44,6 +46,13 @@ export default function StudySpaces() {
   };
 
   if (loading) return <div className="p-8 text-center text-slate-500">Loading Spaces...</div>;
+
+  if (errorMsg) return (
+    <div className="p-8 text-center">
+      <div className="text-red-500 font-bold mb-2">Error Loading Spaces</div>
+      <div className="text-slate-600 bg-red-50 p-4 rounded border border-red-200 font-mono text-xs">{errorMsg}</div>
+    </div>
+  );
 
   // Group by zone
   const zones = seats.reduce((acc, seat) => {
