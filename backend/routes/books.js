@@ -206,4 +206,24 @@ router.post('/swipe', async (req, res) => {
     }
 });
 
+// Get Liked Books
+router.get('/liked/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const result = await pool.query(`
+            SELECT b.book_id, b.title, a.first_name || ' ' || a.last_name as author, c.name_slug as category
+            FROM BOOK_SWIPES bs
+            JOIN BOOKS b ON bs.book_id = b.book_id
+            LEFT JOIN AUTHORS a ON b.author_id = a.author_id
+            LEFT JOIN CATEGORIES c ON b.category_id = c.category_id
+            WHERE bs.user_id = $1 AND bs.action = 'like'
+            ORDER BY bs.created_at DESC
+        `, [userId]);
+        res.json(result.rows);
+    } catch (err) {
+        console.error("Fetch Liked Books Error:", err);
+        res.status(500).json({ error: 'Failed to fetch liked books' });
+    }
+});
+
 module.exports = router;

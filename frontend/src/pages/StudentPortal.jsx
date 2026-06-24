@@ -54,6 +54,7 @@ export default function StudentPortal() {
 
  // Study Groups
  const [studyGroups, setStudyGroups] = useState([]);
+ const [likedBooks, setLikedBooks] = useState([]);
 
  const fetchHistory = async () => {
  try {
@@ -127,6 +128,13 @@ export default function StudentPortal() {
  } catch (err) { console.error(err); }
  };
 
+ const fetchLikedBooks = async () => {
+ try {
+ const res = await axios.get(`/api/books/liked/${user.id}`);
+ setLikedBooks(res.data);
+ } catch (err) { console.error(err); }
+ };
+
  useEffect(() => {
  fetchHistory();
  fetchStudentInfo();
@@ -139,6 +147,7 @@ export default function StudentPortal() {
  fetchGamification();
  fetchRecommendations();
  fetchStudyGroups();
+ fetchLikedBooks();
  
  // Ping immediately, then every 60 seconds
  const pingActive = () => axios.post(`/api/users/${user.id}/ping`).catch(console.error);
@@ -1027,6 +1036,43 @@ export default function StudentPortal() {
  ))
  )}
  </div>
+ 
+ {/* Liked Books Section */}
+ <div className="mt-8">
+ <div className="flex items-center gap-3 mb-6">
+ <div className="w-10 h-10 bg-rose-50 rounded-xl flex items-center justify-center border border-rose-100">
+ <Flame className="w-5 h-5 text-rose-500" />
+ </div>
+ <div>
+ <h3 className="text-xl font-black text-slate-800">Books You Liked</h3>
+ <p className="text-slate-500 text-xs font-medium">From Discover</p>
+ </div>
+ </div>
+ 
+ <div className="grid lg:grid-cols-2 gap-6">
+ {likedBooks.length === 0 ? (
+ <div className="col-span-full p-8 text-center bg-slate-50 rounded-[24px] border border-slate-100">
+ <p className="text-slate-500 font-medium text-sm">You haven't liked any books yet. Head over to Discover to swipe!</p>
+ </div>
+ ) : (
+ likedBooks.map(book => (
+ <div key={book.book_id} className="bg-white p-4 rounded-[20px] border border-slate-100 flex items-center gap-4 hover:shadow-sm transition-all">
+ <div className="w-12 h-16 bg-slate-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
+ <BookOpen className="w-6 h-6 text-slate-300" />
+ </div>
+ <div className="flex-1 min-w-0">
+ <h4 className="font-bold text-slate-800 text-sm truncate">{book.title}</h4>
+ <p className="text-xs text-slate-500">{book.author}</p>
+ </div>
+ <button onClick={() => { setActiveTab('search'); setLocatingBook(book); }} className="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors shrink-0">
+ <Navigation className="w-4 h-4" />
+ </button>
+ </div>
+ ))
+ )}
+ </div>
+ </div>
+
  </div>
  )}
 
