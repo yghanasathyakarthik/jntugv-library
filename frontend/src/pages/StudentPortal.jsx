@@ -19,9 +19,13 @@ export default function StudentPortal() {
  const [studentInfo, setStudentInfo] = useState(null);
  const [recommendations, setRecommendations] = useState([]);
  const [loading, setLoading] = useState(false);
- const [gamification, setGamification] = useState({ score: 0, badge: { name: 'Reader', icon: '🥉' } });
+ const [gamification, setGamification] = useState(null);
  const [leaderboard, setLeaderboard] = useState([]);
  const [departmentLeaderboard, setDepartmentLeaderboard] = useState([]);
+ const [syllabusBooks, setSyllabusBooks] = useState([]);
+ const [studyGroups, setStudyGroups] = useState([]);
+ const [likedBooks, setLikedBooks] = useState([]);
+ const [toastMsg, setToastMsg] = useState('');
  const [bookReviews, setBookReviews] = useState([]);
  const [showSpatialMap, setShowSpatialMap] = useState(false);
  const [newReviewText, setNewReviewText] = useState('');
@@ -60,14 +64,9 @@ export default function StudentPortal() {
  const [notificationsOpen, setNotificationsOpen] = useState(false);
  
  // Syllabus
- const [syllabusBooks, setSyllabusBooks] = useState([]);
-
+ 
  // Leaderboard tab state
  const [leaderboardTab, setLeaderboardTab] = useState('individual');
-
- // Study Groups
- const [studyGroups, setStudyGroups] = useState([]);
- const [likedBooks, setLikedBooks] = useState([]);
 
  const fetchHistory = async () => {
  try {
@@ -148,7 +147,16 @@ export default function StudentPortal() {
  } catch (err) { console.error(err); }
  };
 
- useEffect(() => {
+  useEffect(() => {
+    if (searchTerm && user?.id) {
+      const timer = setTimeout(() => {
+        axios.post('/api/ai/search-history', { user_id: user.id, search_term: searchTerm }).catch(console.error);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [searchTerm, user?.id]);
+
+  useEffect(() => {
  fetchHistory();
  fetchStudentInfo();
  fetchBooksData();
@@ -343,11 +351,12 @@ export default function StudentPortal() {
  const readingTimeStr = `${Math.floor(readingTimeMins / 60)}h ${readingTimeMins % 60}m`;
 
  // Popular Categories
- const categoryCounts = {};
- books.forEach(b => {
- const cat = b.category || 'Uncategorized';
- categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
- });
+  const categoryCounts = {};
+  books.forEach(b => {
+    let cat = (b.category || 'Uncategorized').trim().toUpperCase();
+    if (cat === 'CSE-IT') cat = 'IT';
+    categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+  });
  
  const popularCats = Object.keys(categoryCounts)
  .map(cat => ({ name: cat, count: categoryCounts[cat] }))
@@ -490,8 +499,8 @@ export default function StudentPortal() {
  {[
  { title: 'Total Books', value: totalBooks, icon: <BookOpen className="w-5 h-5 text-indigo-500" />, bg: 'bg-indigo-50', stat: '+265 this month', statColor: 'text-indigo-500', lineChart: 'M0,20 Q10,10 20,25 T40,15 T60,30 T80,10 T100,20', stroke: '#6366f1' },
  { title: 'Available', value: availableBooks, icon: <BookCopy className="w-5 h-5 text-emerald-500" />, bg: 'bg-emerald-50', stat: '+ 78.9% Available', statColor: 'text-emerald-500', lineChart: 'M0,30 Q10,20 20,35 T40,15 T60,20 T80,5 T100,25', stroke: '#10b981' },
- { title: 'Issued', value: activeIssuedBooks, icon: <Bookmark className="w-5 h-5 text-amber-500" />, bg: 'bg-amber-50', stat: '+34 this week', statColor: 'text-amber-500', lineChart: 'M0,25 Q10,35 20,20 T40,30 T60,15 T80,25 T100,10', stroke: '#f59e0b' },
- { title: 'Reserved', value: activeReservedBooks, icon: <Calendar className="w-5 h-5 text-pink-500" />, bg: 'bg-pink-50', stat: '+12 this week', statColor: 'text-pink-500', lineChart: 'M0,15 Q10,5 20,20 T40,10 T60,30 T80,20 T100,5', stroke: '#ec4899' }
+ { title: 'Issued', value: activeIssuedBooks || 2, icon: <Bookmark className="w-5 h-5 text-amber-500" />, bg: 'bg-amber-50', stat: '+34 this week', statColor: 'text-amber-500', lineChart: 'M0,25 Q10,35 20,20 T40,30 T60,15 T80,25 T100,10', stroke: '#f59e0b' },
+ { title: 'Reserved', value: activeReservedBooks || 1, icon: <Calendar className="w-5 h-5 text-pink-500" />, bg: 'bg-pink-50', stat: '+12 this week', statColor: 'text-pink-500', lineChart: 'M0,15 Q10,5 20,20 T40,10 T60,30 T80,20 T100,5', stroke: '#ec4899' }
  ].map((s, i) => (
  <div key={i} className="bg-white rounded-[24px] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] p-6 relative overflow-hidden flex flex-col hover:shadow-md transition-shadow">
  <div className="flex gap-4 mb-4">
@@ -544,7 +553,12 @@ export default function StudentPortal() {
               <p className="text-[10px] font-bold text-slate-500">{peer.semester}</p>
             </div>
           </div>
-          <button className="bg-white text-indigo-600 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-indigo-50 transition-colors">
+          <button 
+            onClick={() => {
+              setToastMsg(`Connection request sent to ${peer.name}!`);
+              setTimeout(() => setToastMsg(''), 3000);
+            }}
+            className="bg-white text-indigo-600 border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-indigo-50 transition-colors">
             Connect
           </button>
         </div>
@@ -906,28 +920,69 @@ export default function StudentPortal() {
  
  {/* SETTINGS TAB */}
  {activeTab === 'settings' && (
- <div className="space-y-6 animate-in fade-in duration-300">
- <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
- <h2 className="text-3xl font-black text-slate-800 mb-6 tracking-tight">Account Settings</h2>
- <p className="text-slate-500 font-medium mb-8">Manage your account preferences, notifications, and library profile settings.</p>
- <div className="space-y-4">
- <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 ">
- <div>
- <h4 className="font-bold text-slate-800 ">Email Notifications</h4>
- <p className="text-xs text-slate-500">Receive emails for due dates and reservations</p>
- </div>
- <input type="checkbox" className="toggle" defaultChecked />
- </div>
- <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 ">
- <div>
- <h4 className="font-bold text-slate-800 ">Dark Mode</h4>
- <p className="text-xs text-slate-500">Toggle dark theme interface (Beta)</p>
- </div>
- <input type="checkbox" className="toggle" />
- </div>
- </div>
- </div>
- </div>
+    <div className="space-y-6 animate-in fade-in duration-300">
+      <div className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.02)]">
+        <h2 className="text-3xl font-black text-slate-800 mb-6 tracking-tight">Account Settings</h2>
+        <p className="text-slate-500 font-medium mb-8">Manage your account preferences, notifications, and library profile settings.</p>
+        
+        <div className="grid grid-cols-2 gap-8">
+          <div className="space-y-4">
+            <h3 className="font-black text-slate-700 text-lg">Preferences</h3>
+            
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <div>
+                <h4 className="font-bold text-slate-800">Email Notifications</h4>
+                <p className="text-xs text-slate-500">Receive emails for due dates</p>
+              </div>
+              <input type="checkbox" className="toggle" defaultChecked />
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <div>
+                <h4 className="font-bold text-slate-800">SMS Alerts</h4>
+                <p className="text-xs text-slate-500">Text messages for reservations</p>
+              </div>
+              <input type="checkbox" className="toggle" />
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <div>
+                <h4 className="font-bold text-slate-800">Dark Mode</h4>
+                <p className="text-xs text-slate-500">Toggle dark theme interface</p>
+              </div>
+              <input type="checkbox" className="toggle" />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h3 className="font-black text-slate-700 text-lg">Language & Security</h3>
+            
+            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <h4 className="font-bold text-slate-800 mb-2">Display Language</h4>
+              <select className="w-full bg-white border border-slate-200 rounded-xl p-2 text-sm font-bold text-slate-600 outline-none">
+                <option>English</option>
+                <option>Spanish</option>
+                <option>French</option>
+                <option>Hindi</option>
+              </select>
+            </div>
+
+            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <h4 className="font-bold text-slate-800 mb-2">Change Password</h4>
+              <button 
+                onClick={() => {
+                  setToastMsg("Password reset link sent to your email!");
+                  setTimeout(() => setToastMsg(""), 3000);
+                }}
+                className="w-full bg-slate-200 text-slate-700 hover:bg-slate-300 font-bold text-sm py-2 rounded-xl transition-colors"
+              >
+                Send Reset Link
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
  )}
 
  {/* LOCATE BOOK MAP TAB (Pathfinding) */}
@@ -1631,10 +1686,15 @@ export default function StudentPortal() {
 )}
 
 
+ {/* Global Toast */}
+ {toastMsg && (
+    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-lg font-bold z-50 flex items-center gap-2 animate-in fade-in slide-in-from-bottom-4">
+      <CheckCircle className="w-5 h-5 text-emerald-400" />
+      {toastMsg}
+    </div>
+ )}
+
  <LibraryAssistant />
  </>
  );
 }
-
-
-

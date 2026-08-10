@@ -27,6 +27,7 @@ const gamificationRoutes = require('./routes/gamification');
 const recommendationsRoutes = require('./routes/recommendations');
 const reviewsRoutes = require('./routes/reviews');
 const spacesRoutes = require('./routes/spaces');
+const studyRoutes = require('./routes/study');
 
 app.use('/api/books', booksRoutes);
 app.use('/api/analytics', analyticsRoutes);
@@ -42,6 +43,7 @@ app.use('/api/gamification', gamificationRoutes);
 app.use('/api/recommendations', recommendationsRoutes);
 app.use('/api/reviews', reviewsRoutes);
 app.use('/api/spaces', spacesRoutes);
+app.use('/api/study-seats', studyRoutes);
 
 const pool = require('./db');
 app.listen(PORT, async () => {

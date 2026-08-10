@@ -44,6 +44,20 @@ router.post('/ask', async (req, res) => {
     }
 });
 
+// POST /api/ai/search-history - Log searches
+router.post('/search-history', async (req, res) => {
+    try {
+        const { user_id, search_term } = req.body;
+        if (!user_id || !search_term) return res.status(400).json({ error: 'Missing params' });
+        
+        await pool.query('INSERT INTO USER_SEARCHES (user_id, search_term) VALUES ($1, $2)', [user_id, search_term]);
+        res.json({ success: true });
+    } catch (err) {
+        console.error("Log Search Error:", err);
+        res.status(500).json({ error: 'Failed to log search' });
+    }
+});
+
 // GET /api/ai/recommendations/:userId - Smart Recommendations
 router.get('/recommendations/:userId', async (req, res) => {
     try {
@@ -80,14 +94,27 @@ router.get('/recommendations/:userId', async (req, res) => {
             return res.json(availableCatalog.slice(0, 3));
         }
 
+        // Fetch user's recent searches
+        const searchRes = await pool.query(`
+            SELECT search_term FROM USER_SEARCHES 
+            WHERE user_id = $1 
+            ORDER BY created_at DESC LIMIT 5
+        `, [userId]);
+        const recentSearches = searchRes.rows.map(r => r.search_term).join(', ');
+
         const borrowedContext = borrowed.map(b => `- ${b.title} (${b.category})`).join('\n');
         const catalogContext = availableCatalog.map(b => `[ID: ${b.book_id}] ${b.title} by ${b.author} (${b.category})`).join('\n');
+
+        let userContext = `The user has previously borrowed:\n${borrowedContext}`;
+        if (recentSearches) {
+            userContext += `\nThey have also recently searched for these topics/keywords: ${recentSearches}`;
+        }
 
         const completion = await groq.chat.completions.create({
             messages: [
                 {
                     role: 'system',
-                    content: `You are a recommendation engine. The user has previously borrowed:\n${borrowedContext}\nHere is the available catalog:\n${catalogContext}\nReturn exactly a JSON array of up to 3 book_ids from the catalog that the user would like based on their history. ONLY output the JSON array (e.g. ["BK1001", "BK1003"]). No other text.`
+                    content: `You are a recommendation engine. ${userContext}\nHere is the available catalog:\n${catalogContext}\nReturn exactly a JSON array of up to 3 book_ids from the catalog that the user would most likely want to read based on their borrowing and search history. ONLY output the JSON array (e.g. ["BK1001", "BK1003"]). No other text.`
                 }
             ],
             model: 'llama-3.1-8b-instant',
