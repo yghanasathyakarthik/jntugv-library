@@ -113,10 +113,15 @@ export default function Register() {
                   >
                     <option value="" disabled>Select Department</option>
                     <option value="CSE">Computer Science (CSE)</option>
+                    <option value="IT">Information Tech (IT)</option>
                     <option value="ECE">Electronics (ECE)</option>
+                    <option value="EEE">Electrical (EEE)</option>
                     <option value="MECH">Mechanical (MECH)</option>
                     <option value="CIVIL">Civil (CIVIL)</option>
-                    <option value="IT">Information Tech (IT)</option>
+                    <option value="MET">Metallurgy (MET)</option>
+                    <option value="MCA">Master of Computer Apps (MCA)</option>
+                    <option value="MTECH">Master of Tech (MTECH)</option>
+                    <option value="PHARMACY">Pharmacy</option>
                   </select>
                 </div>
                 

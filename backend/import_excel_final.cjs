@@ -40,42 +40,61 @@ async function runImport() {
         console.log(`Found ${data.length} rows.`);
 
         client = await pool.connect();
-        await client.query('BEGIN');
-
         console.log("1. Normalizing Authors & Categories...");
         const uniqueAuthors = [...new Set(data.map(r => r.Author).filter(Boolean))];
         const uniqueCategories = [...new Set(data.map(r => r.Department).filter(Boolean))];
 
-        // Insert Categories
-        const catMap = {};
-        for (const cat of uniqueCategories) {
-            const res = await client.query(
-                `INSERT INTO CATEGORIES (name_slug, department_tag) VALUES ($1, $2) ON CONFLICT DO NOTHING RETURNING category_id`,
-                [cat.toLowerCase().replace(/[^a-z0-9]+/g, '-'), cat]
-            );
-            if (res.rows.length > 0) catMap[cat] = res.rows[0].category_id;
-            else {
-                const existing = await client.query(`SELECT category_id FROM CATEGORIES WHERE department_tag = $1`, [cat]);
-                catMap[cat] = existing.rows[0].category_id;
+        // Fetch existing categories
+        let existingCats = await client.query('SELECT category_id, department_tag FROM CATEGORIES');
+        let catMap = {};
+        for (let r of existingCats.rows) catMap[r.department_tag] = r.category_id;
+
+        // Insert missing categories in batch
+        const missingCats = uniqueCategories.filter(c => !catMap[c]);
+        if (missingCats.length > 0) {
+            console.log(`Inserting ${missingCats.length} missing categories...`);
+            let values = [];
+            let placeholders = [];
+            let c = 1;
+            for (const cat of missingCats) {
+                placeholders.push(`($${c++}, $${c++})`);
+                values.push(cat.toLowerCase().replace(/[^a-z0-9]+/g, '-'), cat);
             }
+            if (placeholders.length > 0) {
+                await client.query(`INSERT INTO CATEGORIES (name_slug, department_tag) VALUES ${placeholders.join(', ')} ON CONFLICT DO NOTHING`, values);
+            }
+            existingCats = await client.query('SELECT category_id, department_tag FROM CATEGORIES');
+            for (let r of existingCats.rows) catMap[r.department_tag] = r.category_id;
         }
 
-        // Insert Authors
-        const authMap = {};
-        for (const auth of uniqueAuthors) {
-            const res = await client.query(
-                `INSERT INTO AUTHORS (first_name, last_name) VALUES ($1, '') ON CONFLICT DO NOTHING RETURNING author_id`,
-                [auth]
-            );
-            if (res.rows.length > 0) authMap[auth] = res.rows[0].author_id;
-            else {
-                const existing = await client.query(`SELECT author_id FROM AUTHORS WHERE first_name = $1`, [auth]);
-                authMap[auth] = existing.rows[0].author_id;
+        // Fetch existing authors
+        let existingAuth = await client.query('SELECT author_id, first_name FROM AUTHORS');
+        let authMap = {};
+        for (let r of existingAuth.rows) authMap[r.first_name] = r.author_id;
+
+        // Insert missing authors in batch
+        const missingAuth = uniqueAuthors.filter(a => !authMap[a]);
+        if (missingAuth.length > 0) {
+            console.log(`Inserting ${missingAuth.length} missing authors...`);
+            // Batch them in chunks of 500 to avoid too many parameters
+            for (let i = 0; i < missingAuth.length; i+=500) {
+                const chunk = missingAuth.slice(i, i+500);
+                let values = [];
+                let placeholders = [];
+                let c = 1;
+                for (const auth of chunk) {
+                    placeholders.push(`($${c++}, $${c++})`);
+                    values.push(auth, '');
+                }
+                if (placeholders.length > 0) {
+                    await client.query(`INSERT INTO AUTHORS (first_name, last_name) VALUES ${placeholders.join(', ')} ON CONFLICT DO NOTHING`, values);
+                }
             }
+            existingAuth = await client.query('SELECT author_id, first_name FROM AUTHORS');
+            for (let r of existingAuth.rows) authMap[r.first_name] = r.author_id;
         }
 
         console.log("2. Grouping Books...");
-        // Title + Author + Edition -> Book Info
         const booksMap = {}; 
         
         for (const row of data) {
@@ -88,36 +107,53 @@ async function runImport() {
                     category_id: catMap[row.Department] || null,
                     publication_year: parseInt(row.Year) || null,
                     edition: row.Edition ? String(row.Edition) : null,
-                    total_copies: 0,
                     copies: []
                 };
             }
-            booksMap[key].total_copies += 1;
             booksMap[key].copies.push(row.FromAccNo);
         }
 
-        console.log(`Found ${Object.keys(booksMap).length} unique books. Inserting...`);
+        const bookKeys = Object.keys(booksMap);
+        console.log(`Found ${bookKeys.length} unique books. Inserting in chunks...`);
+        
         let booksProcessed = 0;
         let totalAssets = 0;
-        for (const key of Object.keys(booksMap)) {
-            const b = booksMap[key];
-            const bookIdStr = 'B' + Math.random().toString(36).substr(2, 8).toUpperCase();
+        
+        // Chunk sizes
+        const CHUNK_SIZE = 250;
+        
+        for (let i = 0; i < bookKeys.length; i += CHUNK_SIZE) {
+            const chunk = bookKeys.slice(i, i + CHUNK_SIZE);
             
-            await client.query(
-                `INSERT INTO BOOKS (book_id, title, author_id, category_id, publication_year, edition, status)
-                 VALUES ($1, $2, $3, $4, $5, $6, 'Available')`,
-                [bookIdStr, b.title, b.author_id, b.category_id, b.publication_year, b.edition]
-            );
+            await client.query('BEGIN');
+            
+            let bookValues = [];
+            let bookPlaceholders = [];
+            let bookCounter = 1;
 
-            // Prepare assets for this book
-            const assetsList = b.copies.map(accNo => [
-                `ACC-${accNo}`, 
-                bookIdStr
-            ]);
+            let assetsList = [];
             
+            for (const key of chunk) {
+                const b = booksMap[key];
+                const bookIdStr = 'B' + Math.random().toString(36).substr(2, 8).toUpperCase();
+                
+                bookPlaceholders.push(`($${bookCounter++}, $${bookCounter++}, $${bookCounter++}, $${bookCounter++}, $${bookCounter++}, $${bookCounter++}, 'Available')`);
+                bookValues.push(bookIdStr, b.title, b.author_id, b.category_id, b.publication_year, b.edition);
+
+                // Prepare assets for this book
+                b.copies.forEach(accNo => {
+                    assetsList.push([`ACC-${accNo}`, bookIdStr]);
+                });
+                
+                booksProcessed++;
+            }
+            
+            if (bookPlaceholders.length > 0) {
+                await client.query(`INSERT INTO BOOKS (book_id, title, author_id, category_id, publication_year, edition, status) VALUES ${bookPlaceholders.join(', ')}`, bookValues);
+            }
+
             totalAssets += assetsList.length;
-            
-            // Insert Assets directly
+                
             let valueStrings = [];
             let flatValues = [];
             let counter = 1;
@@ -130,16 +166,14 @@ async function runImport() {
                 await client.query(`INSERT INTO BOOK_ASSET_MAP (asset_id, book_id) VALUES ${valueStrings.join(', ')} ON CONFLICT DO NOTHING`, flatValues);
             }
             
-            booksProcessed++;
-            if (booksProcessed % 500 === 0) console.log(`Processed ${booksProcessed} books...`);
+            await client.query('COMMIT');
+            console.log(`Committed chunk. Processed ${booksProcessed} / ${bookKeys.length} books...`);
         }
 
         console.log(`Successfully imported ${booksProcessed} unique books and ${totalAssets} physical copies.`);
-        await client.query('COMMIT');
-        console.log("Transaction committed!");
     } catch(err) {
         if(client) await client.query('ROLLBACK');
-        console.error("Import failed, rolled back.", err);
+        console.error("Import failed, rolled back current chunk.", err);
     } finally {
         if(client) client.release();
         process.exit();

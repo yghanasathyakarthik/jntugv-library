@@ -647,7 +647,7 @@ export default function StudentPortal() {
  </div>
  <div className="flex flex-col justify-center py-1">
  <h4 className="text-[14px] font-black text-slate-800 leading-tight mb-1 line-clamp-2">{book.title}</h4>
- <p className="text-[11px] font-medium text-slate-500 mb-2">{book.author || 'Unknown'}</p>
+ <p className="text-[11px] font-medium text-slate-500 mb-2">{book.author || 'Unknown'}{book.edition ? ` • ${book.edition} Edition` : ''}</p>
  <div className="mt-auto">
  <span className={`inline-flex px-2 py-0.5 text-[9px] font-black rounded-full uppercase tracking-widest ${book.status === 'Available' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'}`}>{book.status}</span>
  </div>
@@ -675,7 +675,7 @@ export default function StudentPortal() {
  </div>
  <div className="flex flex-col justify-center py-1">
  <h4 className="text-[13px] font-black text-slate-800 leading-tight mb-1 line-clamp-2">{book.title}</h4>
- <p className="text-[10px] font-medium text-slate-500 mb-2">{book.author || 'Unknown'}</p>
+ <p className="text-[10px] font-medium text-slate-500 mb-2">{book.author || 'Unknown'}{book.edition ? ` • ${book.edition} Ed` : ''}</p>
  <div className="mt-auto flex items-center gap-1 text-[11px] font-bold text-emerald-500">
  <span>●</span> Available
  </div>
@@ -841,7 +841,7 @@ export default function StudentPortal() {
  </div>
  <div className="flex flex-col pt-1">
  <h3 className="text-lg font-black text-slate-800 leading-tight mb-2 line-clamp-2">{book.title}</h3>
- <p className="text-slate-500 text-sm font-medium mb-3">{book.author}</p>
+ <p className="text-slate-500 text-sm font-medium mb-3">{book.author}{book.edition ? ` • ${book.edition} Edition` : ''}</p>
  <div className="mt-auto">
  <span className={`px-2.5 py-1 text-[9px] font-black rounded-full uppercase tracking-widest border ${book.status === 'Available' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>{book.status}</span>
  </div>
@@ -854,7 +854,7 @@ export default function StudentPortal() {
  </div>
  <div className="flex flex-col">
  <span className="text-[10px] text-slate-400 uppercase tracking-widest mb-0.5">Location ID</span>
- <span>Room {book.room?.split(' ')[1] || '02'} • Shelf {book.shelf?.split(' ')[1] || '03'} • Pos 12</span>
+ <span>{book.room || 'Circulating Room'} • {book.section || '1st Floor Left Side'}</span>
  </div>
  </div>
 
@@ -914,8 +914,8 @@ export default function StudentPortal() {
 
  {showSpatialMap && locatingBook && (
  <SpatialMap locationData={{
- room_number: locatingBook.room || 'CS Room 02',
- section_name: locatingBook.section || 'General',
+ room_number: locatingBook.room || 'Circulating Room',
+ section_name: locatingBook.section || '1st Floor Left Side',
  rack_number: locatingBook.rack || 'Rack 05',
  shelf_number: locatingBook.shelf || 'Shelf 03',
  position_grid_index: 'Position 12'
@@ -934,7 +934,7 @@ export default function StudentPortal() {
  <div>
  <h3 className="font-black text-slate-800 text-lg leading-tight mb-2">{locatingBook.title}</h3>
  <div className="inline-flex items-center gap-1.5 bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest border border-indigo-100">
- <MapPin className="w-3.5 h-3.5" /> Floor 02 • Room 02
+ <MapPin className="w-3.5 h-3.5" /> {locatingBook.section || '1st Flr Left Side'} • {locatingBook.room || 'Circulating Room'}
  </div>
  </div>
  </div>
