@@ -34,6 +34,19 @@ export default function StudentPortal() {
  const [availableBooks, setAvailableBooks] = useState(0);
 
  // Appeals
+ const [searchCategory, setSearchCategory] = useState('');
+
+ // Derived filtered books for search tab
+ const filteredBooks = books.filter(book => {
+   const matchesSearch = !searchTerm || 
+     (book.title?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+     (book.author?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+     (book.isbn?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+   const matchesCategory = !searchCategory || 
+     (book.category?.toLowerCase() === searchCategory.toLowerCase());
+   return matchesSearch && matchesCategory;
+ });
+
  const [appeals, setAppeals] = useState([]);
  const [appealType, setAppealType] = useState('New Book Request');
  const [appealDescription, setAppealDescription] = useState('');
@@ -809,28 +822,43 @@ export default function StudentPortal() {
  <p className="text-slate-500 font-medium relative z-10">Locate books instantly across the entire library system. Matches titles, authors, and ISBNs.</p>
  
  <div className="mt-8 flex flex-col md:flex-row gap-4 relative z-10">
- <div className="relative flex-1 group">
+ <div className="relative flex-[2] group">
  <SearchIcon className="w-5 h-5 text-slate-400 absolute left-5 top-1/2 -translate-y-1/2 group-focus-within:text-indigo-500 transition-colors" />
  <input 
  type="text"
  value={searchTerm}
  onChange={e => setSearchTerm(e.target.value)}
- placeholder="Search by title, author, ISBN, category keywords..."
+ placeholder="Search by title, author, ISBN..."
  className="w-full bg-white border-2 border-slate-100 rounded-2xl py-4 pl-14 pr-4 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium text-slate-700 shadow-sm"
  />
  </div>
- <button onClick={handleSearch} className="bg-indigo-600 text-white font-black px-10 py-4 rounded-2xl shadow-[0_4px_20px_rgba(79,70,229,0.3)] hover:shadow-[0_8px_30px_rgba(79,70,229,0.4)] hover:-translate-y-0.5 transition-all whitespace-nowrap">
- Search Catalog
- </button>
+ <div className="relative flex-[1] group">
+ <select 
+ value={searchCategory}
+ onChange={e => setSearchCategory(e.target.value)}
+ className="w-full bg-white border-2 border-slate-100 rounded-2xl py-4 px-4 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-medium text-slate-700 shadow-sm appearance-none outline-none cursor-pointer"
+ >
+ <option value="">All Departments</option>
+ <option value="maths">Maths</option>
+ <option value="english">English</option>
+ <option value="management">Management</option>
+ <option value="civil">Civil Engineering</option>
+ <option value="ece">Electronics (ECE)</option>
+ <option value="cse">Computer Science (CSE)</option>
+ <option value="it">Information Tech (IT)</option>
+ <option value="eee">Electrical (EEE)</option>
+ <option value="mechanical">Mechanical</option>
+ </select>
+ </div>
  </div>
  </div>
 
  <div className="flex items-center justify-between mb-4">
- <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full">{books.length} results found</p>
+ <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full">{filteredBooks.length} results found</p>
  </div>
  
  <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6">
- {books.map(book => (
+ {filteredBooks.map(book => (
  <div key={book.id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all flex flex-col group relative overflow-hidden">
  {/* Decorative background blur */}
  <div className="absolute -right-6 -top-6 w-32 h-32 bg-indigo-50 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
