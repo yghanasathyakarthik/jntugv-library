@@ -854,49 +854,48 @@ export default function LibrarianPortal() {
           {/* ISSUE / RETURN TAB */}
           {activeTab === 'issue' && (
             <div className="space-y-6 animate-in fade-in duration-300">
-               <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-8 rounded-[32px] shadow-[0_8px_32px_rgba(99,102,241,0.2)] flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden text-white border border-white/10">
-                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
-                 <div className="absolute bottom-0 left-20 w-40 h-40 bg-pink-500/20 rounded-full blur-3xl pointer-events-none"></div>
+               {/* Header Card */}
+               <div className="bg-gradient-to-r from-blue-50 to-indigo-100 p-8 rounded-[32px] border border-indigo-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/50 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
                  <div className="relative z-10">
-                   <h2 className="text-3xl font-black mb-2 tracking-tight">QR / Barcode Scanning Pipeline</h2>
-                   <p className="text-white/80 font-medium max-w-xl">Automate book check-out and return operations. Simulates linear barcode scans and matrix QR decodes in real-time.</p>
+                   <h2 className="text-3xl font-black text-indigo-900 mb-2 tracking-tight">QR / Barcode Scanning Pipeline</h2>
+                   <p className="text-indigo-700/80 font-medium max-w-xl">Automate book check-out and return operations. Simulates linear barcode scans and matrix QR decodes in real-time.</p>
                  </div>
-                 <div className="relative z-10 flex bg-black/20 p-1.5 rounded-2xl backdrop-blur-md border border-white/10 shadow-inner">
-                   <button onClick={() => {setScanMode('issue'); setScanMsg(''); setScanErr('');}} className={`px-8 py-3 rounded-[12px] font-bold text-sm transition-all duration-300 ${scanMode === 'issue' ? 'bg-white text-indigo-700 shadow-lg scale-105' : 'text-white/70 hover:text-white hover:bg-white/10'}`}>Issue Book</button>
-                   <button onClick={() => {setScanMode('return'); setScanMsg(''); setScanErr('');}} className={`px-8 py-3 rounded-[12px] font-bold text-sm transition-all duration-300 ${scanMode === 'return' ? 'bg-white text-emerald-700 shadow-lg scale-105' : 'text-white/70 hover:text-white hover:bg-white/10'}`}>Return Book</button>
+                 <div className="relative z-10 flex bg-white/50 p-1.5 rounded-2xl backdrop-blur-sm border border-indigo-200/50">
+                   <button onClick={() => {setScanMode('issue'); setScanMsg(''); setScanErr('');}} className={`px-8 py-3 rounded-[12px] font-bold text-sm transition-all duration-300 ${scanMode === 'issue' ? 'bg-indigo-600 text-white shadow-md scale-105' : 'text-indigo-700 hover:text-indigo-900 hover:bg-white/50'}`}>Issue Book</button>
+                   <button onClick={() => {setScanMode('return'); setScanMsg(''); setScanErr('');}} className={`px-8 py-3 rounded-[12px] font-bold text-sm transition-all duration-300 ${scanMode === 'return' ? 'bg-emerald-600 text-white shadow-md scale-105' : 'text-indigo-700 hover:text-indigo-900 hover:bg-white/50'}`}>Return Book</button>
                  </div>
                </div>
 
                <div className="flex flex-col lg:flex-row gap-6">
                   {/* Left Column - Scanner & Entry */}
-                  <div className="w-full lg:w-1/2 bg-gradient-to-br from-violet-600 to-fuchsia-600 p-8 rounded-[32px] border border-white/10 shadow-[0_8px_32px_rgba(217,70,239,0.2)] text-white relative overflow-hidden">
-                     <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+                  <div className="w-full lg:w-1/2 bg-white p-8 rounded-[32px] border-2 border-indigo-50 shadow-[0_4px_24px_rgba(99,102,241,0.05)] relative overflow-hidden">
                      <div className="flex justify-between items-center mb-6 relative z-10">
-                        <p className="text-xs font-black text-white/80 uppercase tracking-widest flex items-center gap-2">
-                           <QrCode className="w-5 h-5 text-fuchsia-200" />
+                        <p className="text-xs font-black text-indigo-400 uppercase tracking-widest flex items-center gap-2">
+                           <QrCode className="w-5 h-5 text-indigo-300" />
                            CAMERA VIEWFINDER
                         </p>
-                        <button onClick={() => {setStudentBarcode(''); setAssetBarcode('');}} className="text-white/70 hover:text-white font-bold text-xs uppercase tracking-widest transition-colors bg-black/20 px-4 py-2 rounded-xl backdrop-blur-md">Clear Scans</button>
+                        <button onClick={() => {setStudentBarcode(''); setAssetBarcode('');}} className="text-indigo-500 hover:text-indigo-700 font-bold text-xs uppercase tracking-widest transition-colors bg-indigo-50 px-4 py-2 rounded-xl">Clear Scans</button>
                      </div>
-                     <div className="w-full max-w-sm mx-auto overflow-hidden rounded-[24px] border-4 border-white/20 shadow-2xl bg-black/40 relative z-10 backdrop-blur-sm">
+                     <div className="w-full max-w-sm mx-auto overflow-hidden rounded-[24px] border-4 border-indigo-50 shadow-inner bg-slate-50 relative z-10">
                         <Scanner onScanSuccess={handleCameraScan} onScanFailure={() => {}} />
                      </div>
                      <div className="mt-8 pt-8 relative z-10">
                         <div className="flex items-center gap-4 mb-6">
-                           <div className="h-px bg-white/20 flex-1"></div>
-                           <p className="text-[10px] font-black text-white/60 uppercase tracking-widest text-center">MANUAL ENTRY / SCAN SIMULATION</p>
-                           <div className="h-px bg-white/20 flex-1"></div>
+                           <div className="h-px bg-slate-100 flex-1"></div>
+                           <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">MANUAL ENTRY / SCAN SIMULATION</p>
+                           <div className="h-px bg-slate-100 flex-1"></div>
                         </div>
                         <div className="space-y-5">
                            <div>
-                              <label className="block text-xs font-black text-white/90 mb-2 uppercase tracking-widest drop-shadow-md">Student ID Barcode</label>
-                              <input type="text" value={studentBarcode} onChange={e => setStudentBarcode(e.target.value)} className="w-full bg-black/20 border border-white/20 rounded-[16px] py-4 px-5 text-white placeholder:text-white/40 focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all outline-none backdrop-blur-md font-medium shadow-inner" placeholder="Scan or enter student ID..." />
+                              <label className="block text-xs font-black text-slate-700 mb-2 uppercase tracking-widest">Student ID Barcode</label>
+                              <input type="text" value={studentBarcode} onChange={e => setStudentBarcode(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-[16px] py-4 px-5 text-slate-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none font-medium" placeholder="Scan or enter student ID..." />
                            </div>
                            <div>
-                              <label className="block text-xs font-black text-white/90 mb-2 uppercase tracking-widest drop-shadow-md">Book Asset Barcode</label>
-                              <input type="text" value={assetBarcode} onChange={e => setAssetBarcode(e.target.value)} className="w-full bg-black/20 border border-white/20 rounded-[16px] py-4 px-5 text-white placeholder:text-white/40 focus:ring-2 focus:ring-white/50 focus:border-transparent transition-all outline-none backdrop-blur-md font-medium shadow-inner" placeholder="Scan or enter book asset ID..." />
+                              <label className="block text-xs font-black text-slate-700 mb-2 uppercase tracking-widest">Book Asset Barcode</label>
+                              <input type="text" value={assetBarcode} onChange={e => setAssetBarcode(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-[16px] py-4 px-5 text-slate-800 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none font-medium" placeholder="Scan or enter book asset ID..." />
                            </div>
-                           <button onClick={handleScanAction} className={`w-full text-white font-black py-4 rounded-[16px] shadow-2xl transition-all hover:scale-[1.02] active:scale-95 text-lg flex items-center justify-center gap-2 ${scanMode === 'issue' ? 'bg-gradient-to-r from-blue-500 to-indigo-500 shadow-indigo-500/40 border border-indigo-400' : 'bg-gradient-to-r from-emerald-500 to-teal-500 shadow-emerald-500/40 border border-emerald-400'}`}>
+                           <button onClick={handleScanAction} className={`w-full text-white font-black py-4 rounded-[16px] shadow-lg transition-all hover:-translate-y-0.5 active:scale-95 text-lg flex items-center justify-center gap-2 ${scanMode === 'issue' ? 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/20 border border-indigo-700' : 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20 border border-emerald-700'}`}>
                               <CheckCircle className="w-6 h-6" />
                               {scanMode === 'issue' ? 'Issue Book to Student' : 'Process Book Return'}
                            </button>
@@ -906,35 +905,34 @@ export default function LibrarianPortal() {
                   
                   {/* Right Column - Status & Logs */}
                   <div className="w-full lg:w-1/2 space-y-6">
-                     <div className="bg-gradient-to-br from-emerald-400 to-teal-600 p-8 rounded-[32px] border border-white/10 shadow-[0_8px_32px_rgba(16,185,129,0.2)] flex flex-col justify-center items-center text-center min-h-[280px] relative overflow-hidden text-white">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-white/20 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
-                        <p className="text-xs font-black text-white/80 uppercase tracking-widest mb-4 w-full text-left relative z-10 flex items-center gap-2"><CheckCircle className="w-5 h-5"/> Transaction Status</p>
+                     <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-8 rounded-[32px] border-2 border-emerald-100 shadow-[0_4px_24px_rgba(16,185,129,0.05)] flex flex-col justify-center items-center text-center min-h-[280px] relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-white/60 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
+                        <p className="text-xs font-black text-emerald-600 uppercase tracking-widest mb-4 w-full text-left relative z-10 flex items-center gap-2"><CheckCircle className="w-5 h-5"/> Transaction Status</p>
                         <div className="p-4 w-full text-center relative z-10 flex-1 flex items-center justify-center">
-                           {scanMsg && <div className="w-full p-6 bg-black/20 backdrop-blur-md border border-white/20 rounded-[20px] font-black flex flex-col items-center justify-center gap-3 animate-in zoom-in-95 duration-300 shadow-xl"><CheckCircle className="w-12 h-12 text-emerald-300 drop-shadow-md"/><span className="text-lg drop-shadow-sm">{scanMsg}</span></div>}
-                           {scanErr && <div className="w-full p-6 bg-rose-500/80 backdrop-blur-md border border-rose-400/50 rounded-[20px] font-black flex flex-col items-center justify-center gap-3 animate-in shake duration-300 shadow-xl shadow-rose-500/30"><AlertCircle className="w-12 h-12 text-white drop-shadow-md"/><span className="text-lg drop-shadow-sm">{scanErr}</span></div>}
-                           {!scanMsg && !scanErr && <div className="flex flex-col items-center gap-4 opacity-70"><div className="w-20 h-20 bg-black/10 rounded-full flex items-center justify-center backdrop-blur-sm"><QrCode className="w-10 h-10 text-white"/></div><p className="font-bold text-lg">System Ready for Scanning</p></div>}
+                           {scanMsg && <div className="w-full p-6 bg-white border-2 border-emerald-200 rounded-[20px] font-black flex flex-col items-center justify-center gap-3 animate-in zoom-in-95 duration-300 shadow-lg"><CheckCircle className="w-12 h-12 text-emerald-500"/><span className="text-lg text-emerald-800">{scanMsg}</span></div>}
+                           {scanErr && <div className="w-full p-6 bg-white border-2 border-rose-200 rounded-[20px] font-black flex flex-col items-center justify-center gap-3 animate-in shake duration-300 shadow-lg"><AlertCircle className="w-12 h-12 text-rose-500"/><span className="text-lg text-rose-800">{scanErr}</span></div>}
+                           {!scanMsg && !scanErr && <div className="flex flex-col items-center gap-4 text-emerald-700/50"><div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm"><QrCode className="w-10 h-10"/></div><p className="font-bold text-lg">System Ready for Scanning</p></div>}
                         </div>
                      </div>
 
-                     <div className="bg-gradient-to-br from-orange-400 to-rose-500 p-8 rounded-[32px] border border-white/10 shadow-[0_8px_32px_rgba(244,63,94,0.2)] relative overflow-hidden text-white min-h-[300px]">
-                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/20 rounded-full blur-3xl -ml-20 -mb-20 pointer-events-none"></div>
-                        <h3 className="font-black text-white text-xl mb-6 flex items-center gap-3 relative z-10">
-                           <Library className="w-6 h-6"/> Global Issuance Log
-                           <span className="text-[10px] bg-black/20 text-white/90 px-3 py-1 rounded-full uppercase tracking-widest backdrop-blur-md">Live feed</span>
+                     <div className="bg-gradient-to-br from-rose-50 to-orange-50 p-8 rounded-[32px] border-2 border-rose-100 shadow-[0_4px_24px_rgba(244,63,94,0.05)] relative overflow-hidden min-h-[300px]">
+                        <h3 className="font-black text-rose-900 text-xl mb-6 flex items-center gap-3 relative z-10">
+                           <Library className="w-6 h-6 text-rose-500"/> Global Issuance Log
+                           <span className="text-[10px] bg-white text-rose-600 px-3 py-1 rounded-full uppercase tracking-widest shadow-sm">Live feed</span>
                         </h3>
                         <div className="space-y-4 relative z-10">
                            {allLogs.slice(0, 5).map(log => (
-                             <div key={log.issuance_id} className="p-5 bg-black/20 backdrop-blur-md rounded-[20px] border border-white/10 flex justify-between items-center hover:bg-black/30 transition-colors cursor-pointer group shadow-lg">
+                             <div key={log.issuance_id} className="p-5 bg-white rounded-[20px] border border-rose-100 flex justify-between items-center hover:bg-rose-50/50 transition-colors cursor-pointer group shadow-sm">
                                 <div>
-                                   <p className="font-bold text-white text-base drop-shadow-sm group-hover:text-orange-200 transition-colors">{log.book_title}</p>
-                                   <p className="text-sm text-white/70 font-medium mt-1 flex items-center gap-1.5"><User className="w-3.5 h-3.5"/> {log.student_name}</p>
+                                   <p className="font-bold text-slate-800 text-base group-hover:text-rose-600 transition-colors">{log.book_title}</p>
+                                   <p className="text-sm text-slate-500 font-medium mt-1 flex items-center gap-1.5"><Users className="w-3.5 h-3.5"/> {log.student_name}</p>
                                 </div>
-                                <span className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-inner ${log.actual_return_timestamp ? 'bg-emerald-500/20 text-emerald-100 border border-emerald-400/30' : 'bg-amber-500/20 text-amber-100 border border-amber-400/30'}`}>
+                                <span className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-inner ${log.actual_return_timestamp ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-amber-50 text-amber-600 border border-amber-100'}`}>
                                    {log.actual_return_timestamp ? 'Returned' : 'Issued'}
                                 </span>
                              </div>
                            ))}
-                           {allLogs.length === 0 && <p className="text-sm text-white/70 text-center py-8 font-bold bg-black/10 rounded-[20px] border-2 border-dashed border-white/20">No recent transactions recorded.</p>}
+                           {allLogs.length === 0 && <p className="text-sm text-rose-700/60 text-center py-8 font-bold bg-white/50 rounded-[20px] border-2 border-dashed border-rose-200">No recent transactions recorded.</p>}
                         </div>
                      </div>
                   </div>
