@@ -382,22 +382,7 @@ export default function StudentPortal() {
 
  const renderTopBar = () => (
 
- <header className="h-[88px] bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0 relative z-10">
- <div className="relative w-full max-w-[480px]">
- <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
- <SearchIcon className="w-4 h-4 text-slate-400" />
- </div>
- <input 
- type="text" 
- placeholder="Search for books, authors, or ISBN..." 
- className="w-full bg-[#f8fafc] text-[13px] font-bold text-slate-800 rounded-2xl pl-11 pr-16 py-3.5 border-0 ring-1 ring-inset ring-slate-200 focus:ring-2 focus:ring-inset focus:ring-indigo-500 outline-none transition-all"
- />
- <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
- <div className="flex items-center gap-1 bg-white border border-slate-200 px-2 py-1 rounded text-[10px] font-bold text-slate-400 shadow-sm">
- <span>Ctrl</span><span>K</span>
- </div>
- </div>
- </div>
+ <header className="h-[88px] bg-white border-b border-slate-200 flex items-center justify-end px-8 shrink-0 relative z-10">
 
  <div className="flex items-center gap-4">
  <div className="flex items-center gap-2">
