@@ -659,7 +659,14 @@ export default function StudentPortal() {
  </div>
  <div className="flex flex-col justify-center py-1">
  <h4 className="text-[14px] font-black text-slate-800 leading-tight mb-1 line-clamp-2">{book.title}</h4>
- <p className="text-[11px] font-medium text-slate-500 mb-2">{book.author || 'Unknown'}{book.edition ? ` • ${book.edition} Edition` : ''}</p>
+ <div className="flex flex-wrap items-center gap-2 mb-2">
+    <p className="text-[11px] font-medium text-slate-500">{book.author || 'Unknown'}</p>
+    {book.edition && (
+      <span className="px-1.5 py-0.5 bg-indigo-50 text-indigo-600 rounded text-[9px] font-black uppercase tracking-wider border border-indigo-100">
+        {book.edition} Ed.
+      </span>
+    )}
+ </div>
  <div className="mt-auto">
  <span className={`inline-flex px-2 py-0.5 text-[9px] font-black rounded-full uppercase tracking-widest ${book.status === 'Available' ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-500'}`}>{book.status}</span>
  </div>
@@ -687,7 +694,14 @@ export default function StudentPortal() {
  </div>
  <div className="flex flex-col justify-center py-1">
  <h4 className="text-[13px] font-black text-slate-800 leading-tight mb-1 line-clamp-2">{book.title}</h4>
- <p className="text-[10px] font-medium text-slate-500 mb-2">{book.author || 'Unknown'}{book.edition ? ` • ${book.edition} Ed` : ''}</p>
+ <div className="flex flex-wrap items-center gap-1.5 mb-2">
+    <p className="text-[10px] font-medium text-slate-500">{book.author || 'Unknown'}</p>
+    {book.edition && (
+      <span className="px-1 py-0.5 bg-amber-50 text-amber-600 rounded text-[8px] font-black uppercase tracking-wider border border-amber-100">
+        {book.edition}
+      </span>
+    )}
+ </div>
  <div className="mt-auto flex items-center gap-1 text-[11px] font-bold text-emerald-500">
  <span>●</span> Available
  </div>
@@ -868,7 +882,14 @@ export default function StudentPortal() {
  </div>
  <div className="flex flex-col pt-1">
  <h3 className="text-lg font-black text-slate-800 leading-tight mb-2 line-clamp-2">{book.title}</h3>
- <p className="text-slate-500 text-sm font-medium mb-3">{book.author}{book.edition ? ` • ${book.edition} Edition` : ''}</p>
+ <div className="flex flex-wrap items-center gap-2 mb-3">
+    <p className="text-slate-500 text-sm font-medium">{book.author}</p>
+    {book.edition && (
+      <span className="px-2 py-0.5 bg-indigo-50 text-indigo-600 rounded-md text-[10px] font-black uppercase tracking-widest border border-indigo-100">
+        {book.edition} Edition
+      </span>
+    )}
+ </div>
  <div className="mt-auto">
  <span className={`px-2.5 py-1 text-[9px] font-black rounded-full uppercase tracking-widest border ${book.status === 'Available' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>{book.status}</span>
  </div>
