@@ -197,14 +197,15 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-6 pb-20 relative z-10 w-full flex-1">
          <div className="bg-white rounded-[40px] p-8 md:p-12 border border-slate-100 shadow-[0_8px_40px_rgba(0,0,0,0.04)] flex flex-col lg:flex-row items-center gap-12">
             <div className="flex-1 space-y-6">
-               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-[#9073fd] font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] shadow-sm">
-                 <GraduationCap className="w-4 h-4" /> About JNTU-GV
-               </div>
-               <h2 className="text-[36px] md:text-[48px] font-black text-[#1e293b] tracking-tight leading-tight">Empowering Generations of Innovators</h2>
-               <p className="text-[16px] md:text-[18px] text-[#64748b] font-medium leading-relaxed">
+               <h2 className="text-[40px] md:text-[56px] font-black text-[#1e293b] tracking-tight leading-tight flex items-center gap-3 md:gap-4">
+                 <GraduationCap className="w-10 h-10 md:w-12 md:h-12 text-[#9073fd]" />
+                 About JNTU-GV
+               </h2>
+               <h3 className="text-[20px] md:text-[24px] font-bold text-[#9073fd] tracking-tight leading-tight -mt-4">Empowering Generations of Innovators</h3>
+               <p className="text-[15px] text-[#64748b] font-medium leading-relaxed mt-2">
                  Established in January 2022 and named after the renowned Telugu poet and social reformer Gurajada Apparao, <strong className="text-slate-700">Jawaharlal Nehru Technological University Gurajada Vizianagaram (JNTU-GV)</strong> is a premier state technological university located in the North Coastal Andhra region. Our main campus at Dwarapudi is dedicated to promoting excellence in higher technical education, research, and innovation across critical disciplines including Computer Science, IT, ECE, EEE, Civil, Mechanical, and Metallurgical Engineering.
                </p>
-               <p className="text-[16px] md:text-[18px] text-[#64748b] font-medium leading-relaxed">
+               <p className="text-[15px] text-[#64748b] font-medium leading-relaxed">
                  We bridge the gap between academic education and industry requirements by fostering an environment of practical, hands-on learning. Through modern laboratories, extensive library resources, hackathons, and strong industry interactions, we aim to produce knowledgeable, skilled, and socially responsible professionals. At JNTU-GV, we actively promote extracurricular growth, leadership, and entrepreneurship to shape the leaders of tomorrow.
                </p>
             </div>
@@ -236,9 +237,34 @@ export default function Home() {
                </p>
             </div>
 
-            {/* Links */}
-            <div className="flex gap-10">
+            {/* Links & Developers */}
+            <div className="flex flex-col md:flex-row gap-12 md:gap-16 items-center md:items-start">
                <div className="text-center md:text-right">
+                  <h4 className="text-indigo-400 font-bold uppercase tracking-widest text-sm mb-5">Developed By</h4>
+                  <div className="flex flex-col gap-4">
+                     <div className="flex items-center gap-3 justify-center md:justify-end">
+                        <div className="text-right">
+                           <p className="text-slate-200 font-bold text-[15px]">Y. Ghana Sathya Karthik</p>
+                           <p className="text-slate-500 text-xs font-medium">Developer</p>
+                        </div>
+                        <div className="w-11 h-11 rounded-full bg-slate-800 border-2 border-indigo-400/30 overflow-hidden shrink-0">
+                           <img src="/karthik.jpg" alt="Y. Ghana Sathya Karthik" onError={(e) => { e.target.src = 'https://ui-avatars.com/api/?name=Karthik&background=random'; }} className="w-full h-full object-cover" />
+                        </div>
+                     </div>
+                     <div className="flex items-center gap-3 justify-center md:justify-end">
+                        <div className="text-right">
+                           <p className="text-slate-200 font-bold text-[15px]">V. Charu Brunda Hasini</p>
+                           <p className="text-slate-500 text-xs font-medium">Developer</p>
+                        </div>
+                        <div className="w-11 h-11 rounded-full bg-slate-800 border-2 border-pink-400/30 overflow-hidden shrink-0">
+                           <img src="/hasini.jpg" alt="V. Charu Brunda Hasini" onError={(e) => { e.target.src = 'https://ui-avatars.com/api/?name=Hasini&background=random'; }} className="w-full h-full object-cover" />
+                        </div>
+                     </div>
+                  </div>
+               </div>
+
+               <div className="text-center md:text-right">
+                  <h4 className="text-indigo-400 font-bold uppercase tracking-widest text-sm mb-4">Quick Links</h4>
                   <Link to="/login" className="block text-slate-400 hover:text-white font-medium mb-3 transition-colors">Student Login</Link>
                   <Link to="/login" className="block text-slate-400 hover:text-white font-medium mb-3 transition-colors">Admin Login</Link>
                   <Link to="#" className="block text-slate-400 hover:text-white font-medium transition-colors">Privacy & Policy</Link>
