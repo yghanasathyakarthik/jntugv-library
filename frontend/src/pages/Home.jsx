@@ -197,8 +197,8 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-6 pb-20 relative z-10 w-full flex-1">
          <div className="bg-white rounded-[40px] p-8 md:p-12 border border-slate-100 shadow-[0_8px_40px_rgba(0,0,0,0.04)] flex flex-col lg:flex-row items-center gap-12">
             <div className="flex-1 space-y-6">
-               <h2 className="text-[40px] md:text-[56px] font-black text-[#1e293b] tracking-tight leading-tight flex items-center gap-3 md:gap-4">
-                 <GraduationCap className="w-10 h-10 md:w-12 md:h-12 text-[#9073fd]" />
+               <h2 className="text-[32px] md:text-[44px] font-black text-[#1e293b] tracking-tight leading-tight flex items-center gap-3 md:gap-4">
+                 <GraduationCap className="w-8 h-8 md:w-10 md:h-10 text-[#9073fd]" />
                  About JNTU-GV
                </h2>
                <h3 className="text-[20px] md:text-[24px] font-bold text-[#9073fd] tracking-tight leading-tight -mt-4">Empowering Generations of Innovators</h3>
