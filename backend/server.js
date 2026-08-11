@@ -45,6 +45,9 @@ app.use('/api/reviews', reviewsRoutes);
 app.use('/api/spaces', spacesRoutes);
 app.use('/api/study-seats', studyRoutes);
 
+const finesRoutes = require('./routes/fines');
+app.use('/api/fines', finesRoutes);
+
 const pool = require('./db');
 app.listen(PORT, async () => {
     try {
@@ -90,4 +93,22 @@ app.listen(PORT, async () => {
         console.error("Failed to init tables:", e.message);
     }
     console.log(`Server running on port ${PORT}`);
+
+    // Set up daily cron to calculate fines and send notifications (every 24 hours)
+    setInterval(() => {
+        try {
+            const http = require('http');
+            const req = http.request({
+                hostname: 'localhost',
+                port: PORT,
+                path: '/api/fines/calculate',
+                method: 'POST'
+            });
+            req.on('error', (e) => console.error('Cron error:', e));
+            req.end();
+            console.log('Automated fine calculation triggered.');
+        } catch (err) {
+            console.error('Failed to trigger fines cron', err);
+        }
+    }, 24 * 60 * 60 * 1000); // 24 hours
 });

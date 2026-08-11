@@ -62,6 +62,11 @@ export default function LibrarianPortal() {
   // Reservations
   const [reservations, setReservations] = useState([]);
 
+  // Fines
+  const [finesData, setFinesData] = useState([]);
+  const [finesLoading, setFinesLoading] = useState(false);
+  const [selectedStudentFines, setSelectedStudentFines] = useState(null);
+
   // Notifications
   const [notifTarget, setNotifTarget] = useState('all');
   const [notifTitle, setNotifTitle] = useState('');
@@ -69,12 +74,22 @@ export default function LibrarianPortal() {
   const [notifType, setNotifType] = useState('info');
   const [sendingNotif, setSendingNotif] = useState(false);
 
+  const fetchFines = async () => {
+    try {
+      const res = await axios.get('/api/fines/all');
+      setFinesData(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     fetchStats();
     fetchExplorerData();
     fetchAppeals();
     fetchReservations();
-    const interval = setInterval(() => { fetchStats(); fetchExplorerData(); fetchAppeals(); fetchReservations(); }, 10000);
+    fetchFines();
+    const interval = setInterval(() => { fetchStats(); fetchExplorerData(); fetchAppeals(); fetchReservations(); fetchFines(); }, 10000);
     return () => clearInterval(interval);
   }, []);
 
@@ -341,6 +356,7 @@ export default function LibrarianPortal() {
             { id: 'audit', icon: ClipboardCheck, label: 'Inventory Audit' },
             { id: 'reports', icon: FileText, label: 'Reports' },
             { id: 'reservations', icon: Calendar, label: 'Reservations' },
+            { id: 'fines', icon: AlertCircle, label: 'Fines & Overdue' },
             { id: 'appeals', icon: MessageSquare, label: 'Appeals' },
             { id: 'settings', icon: SettingsIcon, label: 'Settings' },
           ].map(item => (
@@ -349,7 +365,7 @@ export default function LibrarianPortal() {
               onClick={() => setActiveTab(item.id)}
               className={`whitespace-nowrap shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl text-[10px] md:text-xs font-bold transition-all ${activeTab === item.id ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md shadow-blue-500/20' : 'text-slate-500 hover:bg-[#f4f7fe] hover:text-blue-600'}`}
             >
-              <item.icon className={`w-4 h-4 md:w-[18px] md:h-[18px] ${activeTab === item.id ? 'text-white' : 'text-blue-400'}`} /> <span className="hidden sm:inline md:inline">{item.label}</span>
+              <item.icon className={`w-4 h-4 md:w-[18px] md:h-[18px] ${activeTab === item.id ? 'text-white' : 'text-blue-400'}`} /> <span>{item.label}</span>
             </button>
           ))}
         </nav>
@@ -1049,6 +1065,94 @@ export default function LibrarianPortal() {
           )}
 
           {/* APPEALS TAB */}
+          {/* FINES & OVERDUE TAB */}
+          {activeTab === 'fines' && (
+            <div className="space-y-6 animate-in fade-in duration-300">
+               <div className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex items-center justify-between overflow-hidden relative">
+                 <div className="relative z-10">
+                   <h2 className="text-[26px] font-black text-[#0f172a] tracking-tight mb-1">Fines & Overdue Tracking</h2>
+                   <p className="text-slate-500 font-medium text-sm">Monitor overdue books, pending fines, and send reminders.</p>
+                 </div>
+                 <div className="flex gap-3 relative z-10">
+                   <button 
+                     onClick={async () => {
+                       try {
+                         const res = await axios.post('/api/fines/calculate');
+                         alert(res.data.message + '. Notifications sent: ' + res.data.notificationsSent);
+                         fetchFines();
+                       } catch (e) {
+                         alert('Error running fine calculation.');
+                       }
+                     }}
+                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-md transition-all flex items-center gap-2"
+                   >
+                     <AlertCircle className="w-4 h-4" /> Run Fine Calculation & Reminders
+                   </button>
+                 </div>
+                 <div className="hidden md:flex absolute right-0 top-0 bottom-0 w-1/3 items-center justify-end pr-10 opacity-90">
+                    <AlertCircle className="w-32 h-32 text-indigo-500/10" />
+                 </div>
+                 <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-indigo-50/50 to-transparent pointer-events-none"></div>
+               </div>
+
+               <div className="bg-white rounded-3xl border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.02)] overflow-hidden">
+                 <div className="overflow-x-auto">
+                   <table className="w-full text-left border-collapse">
+                     <thead>
+                       <tr className="bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                         <th className="p-4 pl-6">Student</th>
+                         <th className="p-4">Department / Sem</th>
+                         <th className="p-4">Total Fine Owed</th>
+                         <th className="p-4">Overdue Books</th>
+                         <th className="p-4 pr-6 text-right">Action</th>
+                       </tr>
+                     </thead>
+                     <tbody className="divide-y divide-slate-100">
+                       {finesData.length === 0 ? (
+                         <tr>
+                           <td colSpan="5" className="p-8 text-center text-slate-400 font-medium">No students currently have fines or overdue books.</td>
+                         </tr>
+                       ) : (
+                         finesData.map(student => (
+                           <tr key={student.id} className="hover:bg-slate-50/50 transition-colors cursor-pointer" onClick={() => setSelectedStudentFines(student)}>
+                             <td className="p-4 pl-6">
+                               <div className="flex flex-col">
+                                 <span className="font-bold text-sm text-slate-800">{student.name}</span>
+                                 <span className="text-[11px] font-bold text-slate-400">{student.barcode_id}</span>
+                               </div>
+                             </td>
+                             <td className="p-4">
+                               <div className="flex flex-col">
+                                 <span className="font-semibold text-xs text-slate-600">{student.department || 'N/A'}</span>
+                                 <span className="text-[11px] text-slate-400">{student.semester || 'N/A'}</span>
+                               </div>
+                             </td>
+                             <td className="p-4">
+                               <span className="font-black text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg">
+                                 ₹{student.total_current_fine}
+                               </span>
+                             </td>
+                             <td className="p-4">
+                               <span className="font-bold text-xs text-slate-600">{(student.overdue_books || []).length} Book(s)</span>
+                             </td>
+                             <td className="p-4 pr-6 text-right">
+                               <button 
+                                 onClick={(e) => { e.stopPropagation(); setSelectedStudentFines(student); }}
+                                 className="text-indigo-600 hover:text-indigo-800 font-bold text-xs bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-colors"
+                               >
+                                 View Details
+                               </button>
+                             </td>
+                           </tr>
+                         ))
+                       )}
+                     </tbody>
+                   </table>
+                 </div>
+               </div>
+            </div>
+          )}
+
           {activeTab === 'appeals' && (
             <div className="space-y-6 animate-in fade-in duration-300">
                <div className="bg-white p-8 rounded-[24px] border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
@@ -1311,6 +1415,87 @@ export default function LibrarianPortal() {
                 ))}
              </div>
          </div>
+      </div>
+    </div>
+  </div>
+)}
+
+{/* STUDENT FINES MODAL */}
+{selectedStudentFines && (
+  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+      <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-rose-100 flex items-center justify-center shrink-0">
+            <AlertCircle className="w-5 h-5 text-rose-600"/>
+          </div>
+          <div>
+            <h3 className="text-lg font-black text-slate-800 leading-tight">Student Fine Details</h3>
+            <p className="text-xs font-bold text-slate-500">{selectedStudentFines.name} ({selectedStudentFines.barcode_id})</p>
+          </div>
+        </div>
+        <button onClick={() => setSelectedStudentFines(null)} className="text-slate-400 hover:text-slate-600 p-2 hover:bg-slate-100 rounded-full transition-colors">
+          <XCircle className="w-6 h-6" />
+        </button>
+      </div>
+      
+      <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Department</p>
+            <p className="font-bold text-sm text-slate-700">{selectedStudentFines.department || 'N/A'}</p>
+          </div>
+          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Semester</p>
+            <p className="font-bold text-sm text-slate-700">{selectedStudentFines.semester || 'N/A'}</p>
+          </div>
+          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Recorded Fines</p>
+            <p className="font-black text-sm text-slate-700">₹{selectedStudentFines.paid_or_locked_fines}</p>
+          </div>
+          <div className="bg-rose-50 p-4 rounded-2xl border border-rose-100">
+            <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-1">Total Owed</p>
+            <p className="font-black text-lg text-rose-600 leading-none">₹{selectedStudentFines.total_current_fine}</p>
+          </div>
+        </div>
+
+        <div>
+          <h4 className="text-sm font-black text-slate-800 mb-4 flex items-center gap-2">
+            <BookOpen className="w-4 h-4 text-indigo-500" /> Overdue Books
+          </h4>
+          {(!selectedStudentFines.overdue_books || selectedStudentFines.overdue_books.length === 0) ? (
+            <div className="bg-emerald-50 text-emerald-600 p-4 rounded-2xl text-sm font-bold border border-emerald-100 flex items-center gap-2">
+              <CheckCircle className="w-4 h-4" /> No currently overdue books.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {selectedStudentFines.overdue_books.map((book, idx) => (
+                <div key={idx} className="bg-white border border-slate-200 p-4 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-indigo-200 transition-colors">
+                  <div className="flex-1">
+                    <h5 className="font-bold text-slate-800 text-sm mb-1">{book.title}</h5>
+                    <div className="flex items-center gap-3 text-xs">
+                      <span className="font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">ID: {book.asset_id}</span>
+                      <span className="font-semibold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-md">{book.days_overdue} days overdue</span>
+                    </div>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Running Fine</p>
+                    <p className="font-black text-rose-600 text-lg">₹{book.running_fine}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+      
+      <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-3">
+        <button 
+          onClick={() => setSelectedStudentFines(null)}
+          className="px-6 py-2.5 rounded-xl font-bold text-sm text-slate-600 hover:bg-slate-200 transition-colors"
+        >
+          Close
+        </button>
       </div>
     </div>
   </div>

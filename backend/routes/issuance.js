@@ -34,9 +34,9 @@ router.post('/issue', async (req, res) => {
         await client.query("UPDATE BOOKS SET available_copies = available_copies - 1, borrow_count = borrow_count + 1 WHERE book_id = $1", [book_id]);
         await client.query("UPDATE BOOKS SET status = 'Issued' WHERE book_id = $1 AND available_copies = 0", [book_id]);
         
-        // Create issuance log with 15 day return expectation
+        // Create issuance log with 14 day return expectation
         await client.query(
-            "INSERT INTO ISSUANCE_LOGS (asset_id, user_identifier_string, expected_return_date) VALUES ($1, $2, CURRENT_TIMESTAMP + INTERVAL '15 days')", 
+            "INSERT INTO ISSUANCE_LOGS (asset_id, user_identifier_string, expected_return_date) VALUES ($1, $2, CURRENT_TIMESTAMP + INTERVAL '14 days')", 
             [asset_id, barcode_id]
         );
 
@@ -63,7 +63,7 @@ router.post('/return', async (req, res) => {
 
         if (!barcode_id) return res.status(400).json({ error: 'Student barcode is required to verify the return.' });
 
-        const logRes = await client.query('SELECT user_identifier_string FROM ISSUANCE_LOGS WHERE asset_id = $1 AND actual_return_timestamp IS NULL', [asset_id]);
+        const logRes = await client.query('SELECT user_identifier_string, expected_return_date FROM ISSUANCE_LOGS WHERE asset_id = $1 AND actual_return_timestamp IS NULL', [asset_id]);
         if (logRes.rows.length === 0) return res.status(400).json({ error: 'This book is not currently issued.' });
         
         if (logRes.rows[0].user_identifier_string !== barcode_id) {
@@ -76,6 +76,18 @@ router.post('/return', async (req, res) => {
 
         await client.query("UPDATE BOOKS SET available_copies = available_copies + 1, status = 'Available' WHERE book_id = $1", [book_id]);
         await client.query("UPDATE ISSUANCE_LOGS SET actual_return_timestamp = CURRENT_TIMESTAMP WHERE asset_id = $1 AND actual_return_timestamp IS NULL", [asset_id]);
+
+        // Calculate if late and apply fines (10 rupees per day late)
+        const expectedDate = new Date(logRes.rows[0].expected_return_date);
+        const currentDate = new Date();
+        if (currentDate > expectedDate) {
+            const diffTime = Math.abs(currentDate - expectedDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const fineAmount = diffDays * 10;
+            if (fineAmount > 0) {
+                await client.query('UPDATE USERS SET fines = COALESCE(fines, 0) + $1 WHERE barcode_id = $2', [fineAmount, barcode_id]);
+            }
+        }
 
         // Gamification: +20 points for returning
         await client.query('UPDATE USERS SET score = score + 20 WHERE barcode_id = $1', [barcode_id]);
