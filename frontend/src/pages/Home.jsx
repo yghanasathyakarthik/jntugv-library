@@ -200,17 +200,17 @@ export default function Home() {
                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-[#9073fd] font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] shadow-sm">
                  <GraduationCap className="w-4 h-4" /> About JNTU-GV
                </div>
-               <h2 className="text-[32px] md:text-[40px] font-black text-[#1e293b] tracking-tight leading-tight">Empowering Generations of Innovators</h2>
-               <p className="text-[15px] text-[#64748b] font-medium leading-relaxed">
+               <h2 className="text-[36px] md:text-[48px] font-black text-[#1e293b] tracking-tight leading-tight">Empowering Generations of Innovators</h2>
+               <p className="text-[16px] md:text-[18px] text-[#64748b] font-medium leading-relaxed">
                  Established in January 2022 and named after the renowned Telugu poet and social reformer Gurajada Apparao, <strong className="text-slate-700">Jawaharlal Nehru Technological University Gurajada Vizianagaram (JNTU-GV)</strong> is a premier state technological university located in the North Coastal Andhra region. Our main campus at Dwarapudi is dedicated to promoting excellence in higher technical education, research, and innovation across critical disciplines including Computer Science, IT, ECE, EEE, Civil, Mechanical, and Metallurgical Engineering.
                </p>
-               <p className="text-[15px] text-[#64748b] font-medium leading-relaxed">
+               <p className="text-[16px] md:text-[18px] text-[#64748b] font-medium leading-relaxed">
                  We bridge the gap between academic education and industry requirements by fostering an environment of practical, hands-on learning. Through modern laboratories, extensive library resources, hackathons, and strong industry interactions, we aim to produce knowledgeable, skilled, and socially responsible professionals. At JNTU-GV, we actively promote extracurricular growth, leadership, and entrepreneurship to shape the leaders of tomorrow.
                </p>
             </div>
             <div className="w-full lg:w-[45%] shrink-0 relative group">
                <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-[32px] blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
-               <img src="/jntugv-building.jpg" onError={(e) => { e.target.src = '/library-building.jpg'; }} alt="JNTU-GV Campus" className="relative w-full h-[300px] md:h-[400px] object-cover rounded-[32px] shadow-2xl border-4 border-white group-hover:scale-[1.02] transition-transform duration-500" />
+               <img src="/OIP.webp" onError={(e) => { e.target.src = '/library-building.jpg'; }} alt="JNTU-GV Campus" className="relative w-full h-[300px] md:h-[400px] object-cover rounded-[32px] shadow-2xl border-4 border-white group-hover:scale-[1.02] transition-transform duration-500" />
             </div>
          </div>
       </div>
