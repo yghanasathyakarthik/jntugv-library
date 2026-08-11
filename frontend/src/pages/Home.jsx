@@ -211,7 +211,7 @@ export default function Home() {
             </div>
             <div className="w-full lg:w-[45%] shrink-0 relative group">
                <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-[32px] blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
-               <img src="/OIP.webp" onError={(e) => { e.target.src = '/library-building.jpg'; }} alt="JNTU-GV Campus" className="relative w-full h-[300px] md:h-[400px] object-cover rounded-[32px] shadow-2xl border-4 border-white group-hover:scale-[1.02] transition-transform duration-500" />
+               <img src="/jntugv-enhanced.png" onError={(e) => { e.target.src = '/library-building.jpg'; }} alt="JNTU-GV Campus" className="relative w-full h-[300px] md:h-[400px] object-cover rounded-[32px] shadow-2xl border-4 border-white group-hover:scale-[1.02] transition-transform duration-500" />
             </div>
          </div>
       </div>
