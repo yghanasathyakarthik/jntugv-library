@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement, Filler } from 'chart.js';
 import { Bar, Doughnut, Line } from 'react-chartjs-2';
-import { Library, Users, BookOpen, AlertCircle, ShieldAlert, Download, Database, LayoutDashboard, PlusCircle, ArrowLeftRight, ClipboardCheck, FileText, Settings as SettingsIcon, LogOut, CheckCircle, Search, QrCode, MapPin, MessageSquare, Bell, Moon, XCircle, Navigation, Calendar } from 'lucide-react';
+import { Library, Users, BookOpen, AlertCircle, ShieldAlert, Download, Database, LayoutDashboard, PlusCircle, ArrowLeftRight, ClipboardCheck, FileText, Settings as SettingsIcon, LogOut, CheckCircle, Search, QrCode, MapPin, MessageSquare, Bell, Moon, XCircle, Navigation, Calendar, Menu, X } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import Scanner from '../components/Scanner';
 import Papa from 'papaparse';
@@ -12,6 +12,7 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,
 
 export default function LibrarianPortal() {
   const { user, logout } = useContext(AuthContext);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -322,16 +323,21 @@ export default function LibrarianPortal() {
   };
 
   const Sidebar = () => (
-    <div className="w-full md:w-72 h-auto md:h-screen sticky top-0 shrink-0 z-20 p-2 md:p-4 flex flex-col">
-      <div className="bg-white/40 backdrop-blur-3xl rounded-[24px] shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-white/50 flex flex-row md:flex-col h-full overflow-x-auto md:overflow-hidden">
-        <div className="p-4 md:p-6 flex items-center gap-3 shrink-0">
-          <div className="w-10 h-10 md:w-12 md:h-12 bg-white p-1 md:p-1.5 rounded-xl shrink-0 overflow-hidden border border-[#e2e8f0] shadow-[0_4px_12px_rgba(0,0,0,0.05)] flex items-center justify-center">
-             <img src="/jntugv-logo.png" alt="JNTUGV" className="w-full h-full object-contain " />
-          </div>
-          <h1 className="text-[14px] md:text-[18px] font-black text-slate-800 tracking-tight leading-tight hidden md:block">JNTUGV<br/><span className="text-[#9073fd] text-[10px] md:text-[11px] uppercase tracking-widest font-bold">Smart Library</span></h1>
-        </div>
+    <div className="w-full md:w-72 h-[100dvh] shrink-0 z-20 p-4 flex flex-col overflow-y-auto custom-scrollbar">
+      <div className="bg-white/40 backdrop-blur-3xl rounded-[24px] shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-white/50 flex flex-col h-full overflow-hidden">
+        <div className="p-4 md:p-6 flex items-center justify-between gap-3 shrink-0">
+  <div className="flex items-center gap-3">
+    <div className="w-10 h-10 md:w-12 md:h-12 bg-white p-1 md:p-1.5 rounded-xl shrink-0 overflow-hidden border border-[#e2e8f0] shadow-[0_4px_12px_rgba(0,0,0,0.05)] flex items-center justify-center">
+      <img src="/jntugv-logo.png" alt="JNTUGV" className="w-full h-full object-contain " />
+    </div>
+    <h1 className="text-[18px] font-black text-slate-800 tracking-tight leading-tight block">JNTUGV<br/><span className="text-[#9073fd] text-[11px] uppercase tracking-widest font-bold">Smart Library</span></h1>
+  </div>
+  <button onClick={() => setIsMobileMenuOpen(false)} className="md:hidden p-2 text-slate-500 bg-white rounded-lg shadow-sm">
+    <X className="w-5 h-5" />
+  </button>
+</div>
         
-        <div className="px-5 pb-4 hidden md:block">
+        <div className="px-5 pb-4 block">
           <div className="bg-[#f4f7fe] rounded-2xl p-3 flex items-center gap-3 border border-slate-100">
             <div className="w-10 h-10 rounded-full bg-white shadow-sm overflow-hidden shrink-0 relative group">
               <img src={localPhoto || user?.profile_photo || "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"} alt="Librarian Profile" className="w-full h-full object-cover" />
@@ -346,7 +352,7 @@ export default function LibrarianPortal() {
           </div>
         </div>
 
-        <nav className="flex-1 px-2 md:px-4 space-x-2 md:space-x-0 space-y-0 md:space-y-1.5 overflow-x-auto md:overflow-y-auto py-2 flex flex-row md:flex-col items-center md:items-stretch">
+        <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto py-2 flex flex-col items-stretch custom-scrollbar">
           {[
             { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
             { id: 'addbook', icon: PlusCircle, label: 'Add Book' },
@@ -362,15 +368,15 @@ export default function LibrarianPortal() {
           ].map(item => (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`whitespace-nowrap shrink-0 w-auto md:w-full flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl text-[10px] md:text-xs font-bold transition-all ${activeTab === item.id ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md shadow-blue-500/20' : 'text-slate-500 hover:bg-[#f4f7fe] hover:text-blue-600'}`}
+              onClick={() => { setActiveTab(item.id); setIsMobileMenuOpen(false); }}
+              className={`whitespace-nowrap shrink-0 w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold transition-all ${activeTab === item.id ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md shadow-blue-500/20' : 'text-slate-500 hover:bg-[#f4f7fe] hover:text-blue-600'}`}
             >
               <item.icon className={`w-4 h-4 md:w-[18px] md:h-[18px] ${activeTab === item.id ? 'text-white' : 'text-blue-400'}`} /> <span>{item.label}</span>
             </button>
           ))}
         </nav>
 
-        <div className="p-2 md:p-4 shrink-0 flex items-center justify-center border-l md:border-l-0 md:border-t border-slate-100">
+        <div className="p-4 shrink-0 flex items-center justify-center border-t border-slate-100">
           <button onClick={logout} className="w-auto md:w-full flex items-center justify-center md:justify-start gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl text-xs font-bold text-slate-500 hover:bg-red-50 hover:text-red-600 transition-all">
             <LogOut className="w-[18px] h-[18px] text-red-400" /> <span className="hidden md:inline">Logout</span>
           </button>
@@ -439,7 +445,25 @@ export default function LibrarianPortal() {
   return (
     <>
     <div className="flex flex-col md:flex-row w-full h-[100dvh] bg-[#f4f7fe] overflow-hidden font-sans relative">
-      <Sidebar />
+  {/* Mobile Header */}
+  <div className="md:hidden flex items-center justify-between p-4 bg-white border-b border-slate-200 z-30 shrink-0 shadow-sm">
+     <div className="flex items-center gap-3">
+       <img src="/jntugv-logo.png" alt="Logo" className="w-8 h-8 object-contain" />
+       <span className="font-black text-slate-800 text-lg">JNTUGV Library</span>
+     </div>
+     <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 text-slate-600 bg-slate-100 rounded-lg">
+       <Menu className="w-6 h-6" />
+     </button>
+  </div>
+
+  {/* Mobile Overlay */}
+  {isMobileMenuOpen && (
+    <div className="fixed inset-0 bg-slate-900/40 z-40 md:hidden backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
+  )}
+
+  <div className={`fixed inset-y-0 left-0 z-50 md:z-0 md:static transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 ease-in-out`}>
+     <Sidebar />
+  </div>
       
       <div className="flex-1 flex flex-col h-full overflow-y-auto relative z-10 px-2 md:px-4">
         <TopBar />

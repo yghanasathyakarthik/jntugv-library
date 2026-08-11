@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { Search, MapPin, Map, Navigation, QrCode, Bookmark, BookOpen, Clock, AlertTriangle, Trophy, Download, CheckCircle, CreditCard, Sparkles, User as UserIcon, Users, LayoutDashboard, Search as SearchIcon, BookCopy, Calendar, Bell, Settings, LogOut, ChevronRight, Check, MessageSquare, Send, History, Barcode, Camera, Zap, Keyboard, XCircle, AlertCircle, ChevronDown, Library, Scan, Bot, Moon, MoreHorizontal, Briefcase, Laptop, Flame } from 'lucide-react';
+import { Search, MapPin, Map, Navigation, QrCode, Bookmark, BookOpen, Clock, AlertTriangle, Trophy, Download, CheckCircle, CreditCard, Sparkles, User as UserIcon, Users, LayoutDashboard, Search as SearchIcon, BookCopy, Calendar, Bell, Settings, LogOut, ChevronRight, Check, MessageSquare, Send, History, Barcode, Camera, Zap, Keyboard, XCircle, AlertCircle, ChevronDown, Library, Scan, Bot, Moon, MoreHorizontal, Briefcase, Laptop, Flame, Menu, X } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { AuthContext } from '../context/AuthContext';
 import Scanner from '../components/Scanner';
@@ -12,6 +12,7 @@ import SwipeBooks from '../components/SwipeBooks';
 
 export default function StudentPortal() {
  const { user, logout } = useContext(AuthContext);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
  const [activeTab, setActiveTab] = useState('dashboard');
  const [searchTerm, setSearchTerm] = useState('');
  const [books, setBooks] = useState([]);
@@ -288,49 +289,54 @@ export default function StudentPortal() {
  };
 
  const renderSidebar = () => (
- <div className="w-[280px] bg-white border-r border-slate-200 flex flex-col h-screen sticky top-0 shrink-0 z-20">
- <div className="p-6 border-b border-slate-100 flex items-center gap-3 shrink-0">
- <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center border border-indigo-100/50 shadow-sm overflow-hidden">
- <img src="/jntugv-logo.png" alt="Logo" className="w-8 h-8 object-contain" />
- </div>
- <h2 className="text-[18px] font-black tracking-tight text-slate-800 leading-tight">JNTUGV Central<br/><span className="text-indigo-600 text-[13px] uppercase tracking-widest font-bold">Smart Library</span></h2>
- </div>
+ <div className="w-[280px] bg-white border-r border-slate-200 flex flex-col h-[100dvh] shrink-0 overflow-y-auto">
+ <div className="p-6 border-b border-slate-100 flex items-center justify-between gap-3 shrink-0">
+  <div className="flex items-center gap-3">
+    <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center border border-indigo-100/50 shadow-sm overflow-hidden">
+      <img src="/jntugv-logo.png" alt="Logo" className="w-8 h-8 object-contain" />
+    </div>
+    <h2 className="text-[18px] font-black tracking-tight text-slate-800 leading-tight">JNTUGV Central<br/><span className="text-indigo-600 text-[13px] uppercase tracking-widest font-bold">Smart Library</span></h2>
+  </div>
+  <button onClick={() => setIsMobileMenuOpen(false)} className="md:hidden p-2 text-slate-500 bg-slate-100 rounded-lg">
+    <X className="w-5 h-5" />
+  </button>
+</div>
  <nav className="p-4 flex-1 flex flex-col gap-1.5 overflow-y-auto custom-scrollbar">
- <button onClick={() => setActiveTab('dashboard')} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'dashboard' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
+ <button onClick={() => { setActiveTab('dashboard'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'dashboard' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
  <LayoutDashboard className="w-[18px] h-[18px]" /> Dashboard
  </button>
- <button onClick={() => {setActiveTab('search'); fetchBooksData();}} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'search' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
+ <button onClick={() => { setActiveTab('search'); fetchBooksData(); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'search' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
  <SearchIcon className="w-[18px] h-[18px]" /> Search Catalog
  </button>
- <button onClick={() => setActiveTab('mybooks')} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'mybooks' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
+ <button onClick={() => { setActiveTab('mybooks'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'mybooks' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
  <BookCopy className="w-[18px] h-[18px]" /> My Books
  </button>
- <button onClick={() => setActiveTab('reservations')} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'reservations' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
+ <button onClick={() => { setActiveTab('reservations'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'reservations' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
  <Calendar className="w-[18px] h-[18px]" /> Reservations
  </button>
- <button onClick={() => setActiveTab('appeals')} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'appeals' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
+ <button onClick={() => { setActiveTab('appeals'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'appeals' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
  <MessageSquare className="w-[18px] h-[18px]" /> Appeals
  </button>
 
- <button onClick={() => {setActiveTab('leaderboard'); fetchGamification();}} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'leaderboard' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
+ <button onClick={() => { setActiveTab('leaderboard'); fetchGamification(); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'leaderboard' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
  <Trophy className="w-[18px] h-[18px]" /> Leaderboard
  </button>
 
- <button onClick={() => setActiveTab('spaces')} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'spaces' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
+ <button onClick={() => { setActiveTab('spaces'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'spaces' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
  <Map className="w-[18px] h-[18px]" /> Study Spaces
  </button>
 
- <button onClick={() => setActiveTab('discover')} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'discover' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
+ <button onClick={() => { setActiveTab('discover'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'discover' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
  <Sparkles className="w-[18px] h-[18px]" /> Discover Books
  </button>
 
- <button onClick={() => setActiveTab('profile')} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'profile' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
+ <button onClick={() => { setActiveTab('profile'); setIsMobileMenuOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-[16px] font-bold transition-all ${activeTab === 'profile' ? 'bg-indigo-500 text-white shadow-[0_4px_12px_rgba(99,102,241,0.25)]' : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800 '}`}>
  <UserIcon className="w-[18px] h-[18px]" /> My Profile
  </button>
 
  </nav>
  <div className="p-4 shrink-0 flex flex-col gap-2 border-t border-slate-100 ">
- <button onClick={() => setActiveTab('settings')} className="w-full flex items-center gap-3 px-4 py-3 rounded-[16px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition-all">
+ <button onClick={() => { setActiveTab('settings'); setIsMobileMenuOpen(false); }} className="w-full flex items-center gap-3 px-4 py-3 rounded-[16px] font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition-all">
  <Settings className="w-[18px] h-[18px]" /> Settings
  </button>
  <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 rounded-[16px] font-bold text-rose-500 hover:bg-rose-50 hover:text-rose-600 transition-all">
@@ -434,9 +440,27 @@ export default function StudentPortal() {
 
  return (
  <>
- <div className="flex w-full h-[100dvh] bg-[#f8fafc] font-sans text-slate-800 overflow-hidden">
+ <div className="flex flex-col md:flex-row w-full h-[100dvh] bg-[#f8fafc] font-sans text-slate-800 overflow-hidden relative">
  
- {renderSidebar()}
+  {/* Mobile Header */}
+  <div className="md:hidden flex items-center justify-between p-4 bg-white border-b border-slate-200 z-30 shrink-0 shadow-sm">
+     <div className="flex items-center gap-3">
+       <img src="/jntugv-logo.png" alt="Logo" className="w-8 h-8 object-contain" />
+       <span className="font-black text-slate-800 text-lg">JNTUGV Central</span>
+     </div>
+     <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 text-slate-600 bg-slate-100 rounded-lg">
+       <Menu className="w-6 h-6" />
+     </button>
+  </div>
+
+  {/* Mobile Overlay */}
+  {isMobileMenuOpen && (
+    <div className="fixed inset-0 bg-slate-900/40 z-40 md:hidden backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
+  )}
+
+  <div className={`fixed inset-y-0 left-0 z-50 md:z-0 md:static transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 ease-in-out`}>
+     {renderSidebar()}
+  </div>
 
  {/* CENTER COLUMN (DASHBOARD) */}
  <div className="flex-1 flex flex-col h-full overflow-hidden relative border-r border-slate-200 ">
@@ -457,10 +481,10 @@ export default function StudentPortal() {
  Welcome back to JNTUGV Central Library<br/>Continue your quest for knowledge.
  </p>
  <div className="flex gap-4">
- <button onClick={() => {setActiveTab('search'); fetchBooksData();}} className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-6 py-3.5 rounded-2xl shadow-[0_8px_20px_rgba(99,102,241,0.3)] transition-all flex items-center gap-2 text-[14px]">
+ <button onClick={() => { setActiveTab('search'); fetchBooksData(); setIsMobileMenuOpen(false); }} className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-6 py-3.5 rounded-2xl shadow-[0_8px_20px_rgba(99,102,241,0.3)] transition-all flex items-center gap-2 text-[14px]">
  Explore Books <ChevronRight className="w-4 h-4" />
  </button>
- <button onClick={() => setActiveTab('mybooks')} className="bg-white hover:bg-slate-50 text-slate-700 font-bold px-6 py-3.5 rounded-2xl shadow-sm border border-white transition-all flex items-center gap-2 text-[14px]">
+ <button onClick={() => { setActiveTab('mybooks'); setIsMobileMenuOpen(false); }} className="bg-white hover:bg-slate-50 text-slate-700 font-bold px-6 py-3.5 rounded-2xl shadow-sm border border-white transition-all flex items-center gap-2 text-[14px]">
  <BookCopy className="w-4 h-4" /> My Bookshelf
  </button>
  </div>
@@ -1088,7 +1112,7 @@ export default function StudentPortal() {
  <BookOpen className="w-8 h-8 text-slate-300" />
  </div>
  <p className="text-slate-500 font-medium text-lg">You have no books currently issued.</p>
- <button onClick={() => setActiveTab('search')} className="mt-4 px-6 py-2.5 bg-indigo-50 text-indigo-600 font-bold rounded-xl hover:bg-indigo-100 transition-colors text-sm">Browse Catalog</button>
+ <button onClick={() => { setActiveTab('search'); setIsMobileMenuOpen(false); }} className="mt-4 px-6 py-2.5 bg-indigo-50 text-indigo-600 font-bold rounded-xl hover:bg-indigo-100 transition-colors text-sm">Browse Catalog</button>
  </div>
  ) : (
  history.filter(log => log.status === 'Issued').map(log => (
