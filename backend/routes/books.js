@@ -226,4 +226,22 @@ router.get('/liked/:userId', async (req, res) => {
     }
 });
 
+// Audit a book asset
+router.post('/audit', async (req, res) => {
+    const { asset_id, condition_status, librarian_id } = req.body;
+    try {
+        const assetRes = await pool.query('SELECT * FROM BOOK_ASSET_MAP WHERE asset_id = $1', [asset_id]);
+        if (assetRes.rows.length === 0) return res.status(404).json({ error: 'Asset not found in database. Check barcode.' });
+        
+        await pool.query(
+            'INSERT INTO INVENTORY_AUDITS (asset_id, librarian_id, condition_status) VALUES ($1, $2, $3)',
+            [asset_id, librarian_id || null, condition_status || 'Good']
+        );
+        res.json({ message: 'Audit recorded successfully.', asset: assetRes.rows[0] });
+    } catch (err) {
+        console.error("Audit error:", err);
+        res.status(500).json({ error: 'Server error recording audit' });
+    }
+});
+
 module.exports = router;

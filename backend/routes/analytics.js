@@ -48,15 +48,26 @@ router.get('/', async (req, res) => {
                 WITH dates AS (
                     SELECT (CURRENT_DATE - s.a) AS date
                     FROM generate_series(0, 29) AS s(a)
+                ),
+                issued_counts AS (
+                    SELECT DATE(issued_timestamp) as date, COUNT(issuance_id) as count
+                    FROM ISSUANCE_LOGS
+                    WHERE issued_timestamp >= CURRENT_DATE - 30
+                    GROUP BY DATE(issued_timestamp)
+                ),
+                returned_counts AS (
+                    SELECT DATE(actual_return_timestamp) as date, COUNT(issuance_id) as count
+                    FROM ISSUANCE_LOGS
+                    WHERE actual_return_timestamp >= CURRENT_DATE - 30
+                    GROUP BY DATE(actual_return_timestamp)
                 )
                 SELECT 
                     TO_CHAR(d.date, 'DD Mon') as label,
-                    COUNT(i.issuance_id) as issued,
-                    COUNT(r.issuance_id) as returned
+                    COALESCE(i.count, 0) as issued,
+                    COALESCE(r.count, 0) as returned
                 FROM dates d
-                LEFT JOIN ISSUANCE_LOGS i ON DATE(i.issued_timestamp) = d.date
-                LEFT JOIN ISSUANCE_LOGS r ON DATE(r.actual_return_timestamp) = d.date
-                GROUP BY d.date
+                LEFT JOIN issued_counts i ON d.date = i.date
+                LEFT JOIN returned_counts r ON d.date = r.date
                 ORDER BY d.date ASC
             `)
         ]);
@@ -71,7 +82,11 @@ router.get('/', async (req, res) => {
             stockIssues: auditRes.rows,
             liveUsers: parseInt(liveRes.rows[0].live_users) || 0,
             transactingUsers: parseInt(transactingRes.rows[0].transacting_users) || 0,
-            monthlyIssuance: issuanceStats.rows
+            monthlyIssuance: issuanceStats.rows.map(r => ({
+                label: r.label,
+                issued: parseInt(r.issued) || 0,
+                returned: parseInt(r.returned) || 0
+            }))
         });
     } catch (err) {
         console.error(err);

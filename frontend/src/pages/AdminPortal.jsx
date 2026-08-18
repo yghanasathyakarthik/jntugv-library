@@ -5,6 +5,7 @@ import { Bar, Doughnut, Line } from 'react-chartjs-2';
 import { Library, Users, BookOpen, AlertCircle, ShieldAlert, Download, Database, LayoutDashboard, PlusCircle, ArrowLeftRight, ClipboardCheck, FileText, Settings as SettingsIcon, LogOut, CheckCircle, Search, QrCode, MapPin, XCircle, Navigation, Calendar, MessageSquare, Check, X, Menu, X } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import Scanner from '../components/Scanner';
+import AuditModal from '../components/AuditModal';
 import Papa from 'papaparse';
 import QRCode from 'react-qr-code';
 
@@ -53,6 +54,7 @@ export default function AdminPortal() {
 
   // Issue / Return State
   const [scanMode, setScanMode] = useState('issue');
+  const [auditModalOpen, setAuditModalOpen] = useState(false);
   const [scanSuccessModal, setScanSuccessModal] = useState(false);
   const [studentBarcode, setStudentBarcode] = useState('');
   const [locatingBook, setLocatingBook] = useState(null);
@@ -801,7 +803,7 @@ export default function AdminPortal() {
                    <h2 className="text-2xl font-black text-slate-800 mb-2">Inventory Audit</h2>
                    <p className="text-slate-500 font-medium">Identify discrepancies between the digital database and physical shelves.</p>
                  </div>
-                 <button className="relative z-10 bg-indigo-600 text-white font-black text-sm px-8 py-3.5 rounded-[14px] shadow-md shadow-indigo-600/20 hover:bg-indigo-700 transition-all active:scale-95 flex items-center gap-2">
+                 <button onClick={() => setAuditModalOpen(true)} className="relative z-10 bg-indigo-600 text-white font-black text-sm px-8 py-3.5 rounded-[14px] shadow-md shadow-indigo-600/20 hover:bg-indigo-700 transition-all active:scale-95 flex items-center gap-2">
                     <ClipboardCheck className="w-5 h-5"/> Start Physical Audit
                  </button>
                </div>
@@ -1156,6 +1158,8 @@ export default function AdminPortal() {
   </div>
 )}
           
+<AuditModal isOpen={auditModalOpen} onClose={() => setAuditModalOpen(false)} user={user} />
+
     </>
   );
 }

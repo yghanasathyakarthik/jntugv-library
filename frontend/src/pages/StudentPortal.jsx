@@ -901,8 +901,8 @@ export default function StudentPortal() {
  <div className="absolute -right-6 -top-6 w-32 h-32 bg-indigo-50 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
  
  <div className="flex gap-5 mb-6 relative z-10">
- <div className="w-[84px] h-[116px] bg-indigo-50/50 border border-indigo-100/50 rounded-2xl flex items-center justify-center shrink-0 shadow-inner overflow-hidden group-hover:scale-105 transition-transform">
- <BookOpen className="w-8 h-8 text-indigo-300" />
+ <div className="w-[84px] h-[116px] bg-white border border-indigo-100 rounded-2xl flex items-center justify-center shrink-0 shadow-sm overflow-hidden group-hover:scale-105 transition-transform p-2">
+ <QRCode value={book.book_id || book.id || 'N/A'} size={60} style={{ height: "auto", maxWidth: "100%", width: "100%" }} fgColor="#4338ca" />
  </div>
  <div className="flex flex-col pt-1">
  <h3 className="text-lg font-black text-slate-800 leading-tight mb-2 line-clamp-2">{book.title}</h3>
