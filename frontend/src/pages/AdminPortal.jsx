@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement, Filler } from 'chart.js';
 import { Bar, Doughnut, Line } from 'react-chartjs-2';
-import { Library, Users, BookOpen, AlertCircle, ShieldAlert, Download, Database, LayoutDashboard, PlusCircle, ArrowLeftRight, ClipboardCheck, FileText, Settings as SettingsIcon, LogOut, CheckCircle, Search, QrCode, MapPin, XCircle, Navigation, Calendar, MessageSquare, Check, X, Menu, X } from 'lucide-react';
+import { Library, Users, BookOpen, AlertCircle, ShieldAlert, Download, Database, LayoutDashboard, PlusCircle, ArrowLeftRight, ClipboardCheck, FileText, Settings as SettingsIcon, LogOut, CheckCircle, Search, QrCode, MapPin, XCircle, Navigation, Calendar, MessageSquare, Check, Menu, X } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import Scanner from '../components/Scanner';
 import AuditModal from '../components/AuditModal';
