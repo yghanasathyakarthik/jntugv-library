@@ -9,6 +9,8 @@ import SpatialMap from '../components/SpatialMap';
 import FocusTimer from '../components/FocusTimer';
 import StudySpaces from '../components/StudySpaces';
 import SwipeBooks from '../components/SwipeBooks';
+import StudentReportModal from '../components/StudentReportModal';
+import { FileSpreadsheet } from 'lucide-react';
 
 export default function StudentPortal() {
  const { user, logout } = useContext(AuthContext);
@@ -23,6 +25,7 @@ export default function StudentPortal() {
  const [gamification, setGamification] = useState(null);
  const [leaderboard, setLeaderboard] = useState([]);
  const [departmentLeaderboard, setDepartmentLeaderboard] = useState([]);
+ const [isReportModalOpen, setIsReportModalOpen] = useState(false);
  const [syllabusBooks, setSyllabusBooks] = useState([]);
  const [studyGroups, setStudyGroups] = useState([]);
  const [likedBooks, setLikedBooks] = useState([]);
@@ -583,7 +586,9 @@ export default function StudentPortal() {
  <div className="bg-white rounded-[24px] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] p-8 flex flex-col">
  <div className="flex justify-between items-center mb-6">
  <h3 className="text-[16px] font-black text-slate-800 ">Reading Activity</h3>
- <span className="text-[11px] font-bold text-indigo-500 cursor-pointer">View Report</span>
+ <button onClick={() => setIsReportModalOpen(true)} className="text-[11px] font-black text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer">
+   <FileSpreadsheet className="w-3.5 h-3.5" /> Download Report
+ </button>
  </div>
  <div className="flex items-center gap-8">
  <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
@@ -1617,6 +1622,26 @@ export default function StudentPortal() {
  </div>
  </div>
 
+  {/* STUDENT ACTIVITY REPORT DOWNLOAD SECTION */}
+  <div className="mt-8 bg-gradient-to-r from-indigo-500 to-purple-600 p-8 rounded-[32px] text-white shadow-[0_8px_30px_rgba(99,102,241,0.25)] flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+    <div className="absolute right-0 top-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+    <div className="relative z-10">
+      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-[11px] font-black uppercase tracking-wider mb-3 backdrop-blur-sm">
+        <FileSpreadsheet className="w-3.5 h-3.5" /> Official Activity Records
+      </div>
+      <h3 className="text-2xl font-black mb-1">Student Library Activity Reports</h3>
+      <p className="text-indigo-100 text-sm font-medium max-w-lg">
+        Download your comprehensive record including library hours spent, books borrowed, returned logs, reading score, and department ranking.
+      </p>
+    </div>
+    <button
+      onClick={() => setIsReportModalOpen(true)}
+      className="relative z-10 bg-white text-indigo-700 hover:bg-slate-50 font-black px-6 py-4 rounded-2xl shadow-lg transition-all flex items-center gap-2.5 shrink-0 active:scale-95 text-sm cursor-pointer"
+    >
+      <Download className="w-4 h-4" /> Download Statement (Weekly / Monthly / Yearly)
+    </button>
+  </div>
+
  </div>
  )}
 
@@ -1724,7 +1749,15 @@ export default function StudentPortal() {
     </div>
  )}
 
- <LibraryAssistant />
- </>
- );
+  <LibraryAssistant />
+
+  <StudentReportModal 
+    isOpen={isReportModalOpen} 
+    onClose={() => setIsReportModalOpen(false)} 
+    studentData={{ ...(studentInfo || user), library_time_minutes: gamification?.library_time_minutes || studentInfo?.library_time_minutes || user?.library_time_minutes, score: gamification?.score || studentInfo?.score || user?.score }} 
+    history={history} 
+    reservations={reservations} 
+  />
+  </>
+  );
 }
