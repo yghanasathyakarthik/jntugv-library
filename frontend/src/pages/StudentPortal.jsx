@@ -389,155 +389,158 @@ export default function StudentPortal() {
  };
  });
 
- const renderTopBar = () => (
-
- <header className="h-[88px] bg-white border-b border-slate-200 flex items-center justify-end px-8 shrink-0 relative z-10">
-
- <div className="flex items-center gap-4">
- <div className="flex items-center gap-2">
- <button onClick={() => setNotificationsOpen(!notificationsOpen)} className="w-10 h-10 rounded-full hover:bg-slate-100 :bg-slate-800 flex items-center justify-center transition-colors relative">
- <Bell className="w-5 h-5 text-slate-600 " strokeWidth={2.5} />
- {notifications.length > 0 && <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white "></span>}
- </button>
- 
- 
- {/* NOTIFICATIONS DROPDOWN */}
- {notificationsOpen && (
- <div className="absolute top-[70px] right-24 w-80 bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-slate-100 z-50 overflow-hidden">
- <div className="px-4 py-3 border-b border-slate-100 flex justify-between items-center bg-slate-50 ">
- <h3 className="font-bold text-slate-800 ">Notifications</h3>
- <span className="text-[10px] bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full font-bold">{notifications.length} New</span>
- </div>
- <div className="max-h-80 overflow-y-auto custom-scrollbar">
- {notifications.length === 0 ? (
- <div className="px-4 py-8 text-center text-slate-500 text-sm font-medium">No new notifications</div>
- ) : (
- notifications.map(n => (
- <div key={n.notification_id} onClick={() => markNotificationRead(n.notification_id)} className="px-4 py-3 border-b border-slate-50 hover:bg-slate-50 :bg-slate-700/30 cursor-pointer transition-colors flex gap-3">
- <div className="w-2 h-2 mt-1.5 rounded-full bg-indigo-500 shrink-0"></div>
- <div>
- <p className="text-[13px] text-slate-800 font-medium leading-snug">{n.message}</p>
- <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{new Date(n.created_at).toLocaleDateString()}</span>
- </div>
- </div>
- ))
- )}
- </div>
- </div>
- )}
- </div>
- 
- <div className="flex items-center gap-3 pl-6 border-l border-slate-200 cursor-pointer group">
- <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-100 ">
- <img src={studentInfo?.profile_photo || user?.profile_photo || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"} alt="Profile" className="w-full h-full object-cover" />
- </div>
- <div className="flex flex-col">
- <span className="text-[14px] font-bold text-slate-800 leading-none mb-1">{studentInfo?.name?.split(' ')[0] || user?.name || 'Karthik'}</span>
- <span className="text-[11px] font-medium text-slate-500 leading-none">Student</span>
- </div>
- <ChevronDown className="w-4 h-4 text-slate-400 ml-2 group-hover:text-slate-600" />
- </div>
- </div>
- </header>
- );
-
- return (
- <>
- <div className="flex flex-col md:flex-row w-full h-[100dvh] bg-[#f8fafc] font-sans text-slate-800 overflow-hidden relative">
- 
-  {/* Mobile Header */}
-  <div className="md:hidden flex items-center justify-between p-4 bg-white border-b border-slate-200 z-30 shrink-0 shadow-sm">
-     <div className="flex items-center gap-3">
-       <img src="/jntugv-logo.png" alt="Logo" className="w-8 h-8 object-contain" />
-       <span className="font-black text-slate-800 text-lg">JNTUGV Central</span>
-     </div>
-     <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 text-slate-600 bg-slate-100 rounded-lg">
-       <Menu className="w-6 h-6" />
-     </button>
+  const renderTopBar = () => (
+  <header className="hidden md:flex h-[88px] bg-white border-b border-slate-200 items-center justify-end px-8 shrink-0 relative z-10">
+  <div className="flex items-center gap-4">
+  <div className="flex items-center gap-2">
+  <button onClick={() => setNotificationsOpen(!notificationsOpen)} className="w-10 h-10 rounded-full hover:bg-slate-100 flex items-center justify-center transition-colors relative">
+  <Bell className="w-5 h-5 text-slate-600" strokeWidth={2.5} />
+  {notifications.length > 0 && <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white"></span>}
+  </button>
+  
+  {/* NOTIFICATIONS DROPDOWN */}
+  {notificationsOpen && (
+  <div className="absolute top-[70px] right-24 w-80 bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-slate-100 z-50 overflow-hidden">
+  <div className="px-4 py-3 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+  <h3 className="font-bold text-slate-800">Notifications</h3>
+  <span className="text-[10px] bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full font-bold">{notifications.length} New</span>
   </div>
-
-  {/* Mobile Overlay */}
-  {isMobileMenuOpen && (
-    <div className="fixed inset-0 bg-slate-900/40 z-40 md:hidden backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
+  <div className="max-h-80 overflow-y-auto custom-scrollbar">
+  {notifications.length === 0 ? (
+  <div className="px-4 py-8 text-center text-slate-500 text-sm font-medium">No new notifications</div>
+  ) : (
+  notifications.map(n => (
+  <div key={n.notification_id} onClick={() => markNotificationRead(n.notification_id)} className="px-4 py-3 border-b border-slate-50 hover:bg-slate-50 cursor-pointer transition-colors flex gap-3">
+  <div className="w-2 h-2 mt-1.5 rounded-full bg-indigo-500 shrink-0"></div>
+  <div>
+  <p className="text-[13px] text-slate-800 font-medium leading-snug">{n.message}</p>
+  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{new Date(n.created_at).toLocaleDateString()}</span>
+  </div>
+  </div>
+  ))
   )}
+  </div>
+  </div>
+  )}
+  </div>
+  
+  <div className="flex items-center gap-3 pl-6 border-l border-slate-200 cursor-pointer group">
+  <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-100">
+  <img src={studentInfo?.profile_photo || user?.profile_photo || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"} alt="Profile" className="w-full h-full object-cover" />
+  </div>
+  <div className="flex flex-col">
+  <span className="text-[14px] font-bold text-slate-800 leading-none mb-1">{studentInfo?.name?.split(' ')[0] || user?.name || 'Karthik'}</span>
+  <span className="text-[11px] font-medium text-slate-500 leading-none">Student</span>
+  </div>
+  <ChevronDown className="w-4 h-4 text-slate-400 ml-2 group-hover:text-slate-600" />
+  </div>
+  </div>
+  </header>
+  );
 
-  <div className={`fixed inset-y-0 left-0 z-50 md:z-0 md:static transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 ease-in-out`}>
-     {renderSidebar()}
+  return (
+  <>
+  <div className="flex flex-col md:flex-row w-full h-[100dvh] bg-[#f8fafc] font-sans text-slate-800 overflow-hidden relative">
+  
+   {/* Mobile Header */}
+   <div className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-slate-200 z-30 shrink-0 shadow-sm">
+      <div className="flex items-center gap-2.5">
+        <img src="/jntugv-logo.png" alt="Logo" className="w-8 h-8 object-contain" />
+        <span className="font-black text-slate-800 text-base">JNTUGV Central</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <button onClick={() => setNotificationsOpen(!notificationsOpen)} className="p-2 text-slate-600 bg-slate-50 rounded-xl relative">
+          <Bell className="w-5 h-5" />
+          {notifications.length > 0 && <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full"></span>}
+        </button>
+        <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 text-slate-600 bg-slate-100 rounded-xl">
+          <Menu className="w-5 h-5" />
+        </button>
+      </div>
+   </div>
+
+   {/* Mobile Overlay */}
+   {isMobileMenuOpen && (
+     <div className="fixed inset-0 bg-slate-900/40 z-40 md:hidden backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
+   )}
+
+   <div className={`fixed inset-y-0 left-0 z-50 md:z-0 md:static transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 transition-transform duration-300 ease-in-out`}>
+      {renderSidebar()}
+   </div>
+
+  {/* CENTER COLUMN (DASHBOARD) */}
+  <div className="flex-1 flex flex-col h-full overflow-hidden relative border-r border-slate-200">
+  {renderTopBar()}
+
+  <main className="flex-1 overflow-y-auto p-4 md:p-8 relative bg-[#f8fafc] custom-scrollbar">
+  
+  {/* DASHBOARD TAB */}
+  {activeTab === 'dashboard' && (
+  <div className="space-y-6 md:space-y-8 animate-in fade-in duration-300 max-w-[1000px] mx-auto">
+  
+  {/* HERO BANNER */}
+  <div className="bg-gradient-to-r from-[#f3e8ff] via-[#e0e7ff] to-[#fae8ff] rounded-[28px] md:rounded-[32px] p-6 md:p-10 flex flex-col md:flex-row md:items-center justify-between relative overflow-hidden">
+  <div className="relative z-10 max-w-sm">
+  <h2 className="text-[20px] md:text-[28px] font-medium text-slate-800 mb-1 tracking-tight">Good Morning,</h2>
+  <h1 className="text-[30px] md:text-[44px] font-black text-slate-900 mb-2 md:mb-4 tracking-tight leading-tight">{studentInfo?.name?.split(' ')[0] || user?.name || 'Karthik'}! <span className="inline-block animate-wave origin-bottom-right">👋</span></h1>
+  <p className="text-slate-600 font-medium text-[13px] md:text-[14px] mb-6 md:mb-8 leading-relaxed">
+  Welcome back to JNTUGV Central Library<br className="hidden sm:inline" /> Continue your quest for knowledge.
+  </p>
+  <div className="flex flex-wrap gap-3">
+  <button onClick={() => { setActiveTab('search'); fetchBooksData(); setIsMobileMenuOpen(false); }} className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-5 py-3 rounded-2xl shadow-[0_8px_20px_rgba(99,102,241,0.3)] transition-all flex items-center gap-2 text-[13px] md:text-[14px] active:scale-95">
+  Explore Books <ChevronRight className="w-4 h-4" />
+  </button>
+  <button onClick={() => { setActiveTab('mybooks'); setIsMobileMenuOpen(false); }} className="bg-white hover:bg-slate-50 text-slate-700 font-bold px-5 py-3 rounded-2xl shadow-sm border border-white transition-all flex items-center gap-2 text-[13px] md:text-[14px] active:scale-95">
+  <BookCopy className="w-4 h-4" /> My Bookshelf
+  </button>
+  </div>
+  </div>
+  {/* Decorative 3D Book Illustration Placeholder */}
+  <div className="absolute right-0 bottom-0 top-0 w-[45%] bg-gradient-to-l from-white/40 to-transparent pointer-events-none hidden md:block"></div>
+  <div className="absolute right-4 md:right-10 bottom-0 pointer-events-none w-44 h-44 md:w-64 md:h-64 opacity-30 md:opacity-90">
+  <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-2xl">
+  <rect x="120" y="40" width="30" height="140" rx="4" fill="#a78bfa" />
+  <rect x="85" y="60" width="30" height="120" rx="4" fill="#60a5fa" />
+  <rect x="50" y="80" width="30" height="100" rx="4" fill="#fbbf24" />
+  <rect x="15" y="100" width="30" height="80" rx="4" fill="#34d399" />
+  <path d="M120 45 L150 45 L150 175 L120 175 Z" fill="#8b5cf6" />
+  <path d="M85 65 L115 65 L115 175 L85 175 Z" fill="#3b82f6" />
+  </svg>
+  </div>
   </div>
 
- {/* CENTER COLUMN (DASHBOARD) */}
- <div className="flex-1 flex flex-col h-full overflow-hidden relative border-r border-slate-200 ">
- {renderTopBar()}
-
- <main className="flex-1 overflow-y-auto p-8 relative bg-[#f8fafc] custom-scrollbar">
- 
- {/* DASHBOARD TAB */}
- {activeTab === 'dashboard' && (
- <div className="space-y-8 animate-in fade-in duration-300 max-w-[1000px] mx-auto">
- 
- {/* HERO BANNER */}
- <div className="bg-gradient-to-r from-[#f3e8ff] via-[#e0e7ff] to-[#fae8ff] rounded-[32px] p-10 flex items-center justify-between relative overflow-hidden">
- <div className="relative z-10 max-w-sm">
- <h2 className="text-[28px] font-medium text-slate-800 mb-1 tracking-tight">Good Morning,</h2>
- <h1 className="text-[44px] font-black text-slate-900 mb-4 tracking-tight leading-none">{studentInfo?.name?.split(' ')[0] || user?.name || 'Karthik'}! <span className="inline-block animate-wave origin-bottom-right">👋</span></h1>
- <p className="text-slate-600 font-medium text-[14px] mb-8 leading-relaxed">
- Welcome back to JNTUGV Central Library<br/>Continue your quest for knowledge.
- </p>
- <div className="flex gap-4">
- <button onClick={() => { setActiveTab('search'); fetchBooksData(); setIsMobileMenuOpen(false); }} className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-6 py-3.5 rounded-2xl shadow-[0_8px_20px_rgba(99,102,241,0.3)] transition-all flex items-center gap-2 text-[14px]">
- Explore Books <ChevronRight className="w-4 h-4" />
- </button>
- <button onClick={() => { setActiveTab('mybooks'); setIsMobileMenuOpen(false); }} className="bg-white hover:bg-slate-50 text-slate-700 font-bold px-6 py-3.5 rounded-2xl shadow-sm border border-white transition-all flex items-center gap-2 text-[14px]">
- <BookCopy className="w-4 h-4" /> My Bookshelf
- </button>
- </div>
- </div>
- {/* Decorative 3D Book Illustration Placeholder */}
- <div className="absolute right-0 bottom-0 top-0 w-[45%] bg-gradient-to-l from-white/40 to-transparent pointer-events-none"></div>
- <div className="absolute right-10 bottom-0 pointer-events-none w-64 h-64 opacity-90">
- <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-2xl">
- <rect x="120" y="40" width="30" height="140" rx="4" fill="#a78bfa" />
- <rect x="85" y="60" width="30" height="120" rx="4" fill="#60a5fa" />
- <rect x="50" y="80" width="30" height="100" rx="4" fill="#fbbf24" />
- <rect x="15" y="100" width="30" height="80" rx="4" fill="#34d399" />
- <path d="M120 45 L150 45 L150 175 L120 175 Z" fill="#8b5cf6" />
- <path d="M85 65 L115 65 L115 175 L85 175 Z" fill="#3b82f6" />
- </svg>
- </div>
- </div>
-
- {/* STATS CARDS */}
- <div className="grid grid-cols-4 gap-4">
- {[
- { title: 'Total Books', value: totalBooks, icon: <BookOpen className="w-5 h-5 text-indigo-500" />, bg: 'bg-indigo-50', stat: '+265 this month', statColor: 'text-indigo-500', lineChart: 'M0,20 Q10,10 20,25 T40,15 T60,30 T80,10 T100,20', stroke: '#6366f1' },
- { title: 'Available', value: availableBooks, icon: <BookCopy className="w-5 h-5 text-emerald-500" />, bg: 'bg-emerald-50', stat: '+ 78.9% Available', statColor: 'text-emerald-500', lineChart: 'M0,30 Q10,20 20,35 T40,15 T60,20 T80,5 T100,25', stroke: '#10b981' },
- { title: 'Issued', value: activeIssuedBooks || 2, icon: <Bookmark className="w-5 h-5 text-amber-500" />, bg: 'bg-amber-50', stat: '+34 this week', statColor: 'text-amber-500', lineChart: 'M0,25 Q10,35 20,20 T40,30 T60,15 T80,25 T100,10', stroke: '#f59e0b' },
- { title: 'Reserved', value: activeReservedBooks || 1, icon: <Calendar className="w-5 h-5 text-pink-500" />, bg: 'bg-pink-50', stat: '+12 this week', statColor: 'text-pink-500', lineChart: 'M0,15 Q10,5 20,20 T40,10 T60,30 T80,20 T100,5', stroke: '#ec4899' }
- ].map((s, i) => (
- <div key={i} className="bg-white rounded-[24px] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] p-6 relative overflow-hidden flex flex-col hover:shadow-md transition-shadow">
- <div className="flex gap-4 mb-4">
- <div className={`w-12 h-12 rounded-full ${s.bg} flex items-center justify-center shrink-0`}>
- {s.icon}
- </div>
- <div className="flex flex-col justify-center">
- <p className="text-[13px] font-bold text-slate-500">{s.title}</p>
- <h3 className="text-[24px] font-black text-slate-800 leading-none">{s.value}</h3>
- </div>
- </div>
- <p className={`text-[10px] font-bold ${s.statColor} mb-6`}>{s.stat}</p>
- <svg className="w-full h-8 absolute bottom-0 left-0 right-0 opacity-40" viewBox="0 0 100 40" preserveAspectRatio="none">
- <path d={s.lineChart} fill="none" stroke={s.stroke} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
- <path d={`${s.lineChart} L100,40 L0,40 Z`} fill={`url(#grad${i})`} stroke="none" />
- <defs>
- <linearGradient id={`grad${i}`} x1="0" x2="0" y1="0" y2="1">
- <stop offset="0%" stopColor={s.stroke} stopOpacity="0.3" />
- <stop offset="100%" stopColor={s.stroke} stopOpacity="0" />
- </linearGradient>
- </defs>
- </svg>
- </div>
- ))}
- </div>
+  {/* STATS CARDS */}
+  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+  {[
+  { title: 'Total Books', value: totalBooks, icon: <BookOpen className="w-4 md:w-5 h-4 md:h-5 text-indigo-500" />, bg: 'bg-indigo-50', stat: '+265 this month', statColor: 'text-indigo-500', lineChart: 'M0,20 Q10,10 20,25 T40,15 T60,30 T80,10 T100,20', stroke: '#6366f1' },
+  { title: 'Available', value: availableBooks, icon: <BookCopy className="w-4 md:w-5 h-4 md:h-5 text-emerald-500" />, bg: 'bg-emerald-50', stat: '+ 78.9% Available', statColor: 'text-emerald-500', lineChart: 'M0,30 Q10,20 20,35 T40,15 T60,20 T80,5 T100,25', stroke: '#10b981' },
+  { title: 'Issued', value: activeIssuedBooks || 2, icon: <Bookmark className="w-4 md:w-5 h-4 md:h-5 text-amber-500" />, bg: 'bg-amber-50', stat: '+34 this week', statColor: 'text-amber-500', lineChart: 'M0,25 Q10,35 20,20 T40,30 T60,15 T80,25 T100,10', stroke: '#f59e0b' },
+  { title: 'Reserved', value: activeReservedBooks || 1, icon: <Calendar className="w-4 md:w-5 h-4 md:h-5 text-pink-500" />, bg: 'bg-pink-50', stat: '+12 this week', statColor: 'text-pink-500', lineChart: 'M0,15 Q10,5 20,20 T40,10 T60,30 T80,20 T100,5', stroke: '#ec4899' }
+  ].map((s, i) => (
+  <div key={i} className="bg-white rounded-[20px] md:rounded-[24px] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] p-4 md:p-6 relative overflow-hidden flex flex-col hover:shadow-md transition-shadow">
+  <div className="flex items-center gap-3 mb-2 md:mb-4">
+  <div className={`w-9 h-9 md:w-12 md:h-12 rounded-full ${s.bg} flex items-center justify-center shrink-0`}>
+  {s.icon}
+  </div>
+  <div className="flex flex-col justify-center min-w-0">
+  <p className="text-[11px] md:text-[13px] font-bold text-slate-500 truncate">{s.title}</p>
+  <h3 className="text-[18px] md:text-[24px] font-black text-slate-800 leading-none">{s.value}</h3>
+  </div>
+  </div>
+  <p className={`text-[9px] md:text-[10px] font-bold ${s.statColor} mb-4 md:mb-6 truncate`}>{s.stat}</p>
+  <svg className="w-full h-6 md:h-8 absolute bottom-0 left-0 right-0 opacity-40" viewBox="0 0 100 40" preserveAspectRatio="none">
+  <path d={s.lineChart} fill="none" stroke={s.stroke} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+  <path d={`${s.lineChart} L100,40 L0,40 Z`} fill={`url(#grad${i})`} stroke="none" />
+  <defs>
+  <linearGradient id={`grad${i}`} x1="0" x2="0" y1="0" y2="1">
+  <stop offset="0%" stopColor={s.stroke} stopOpacity="0.3" />
+  <stop offset="100%" stopColor={s.stroke} stopOpacity="0" />
+  </linearGradient>
+  </defs>
+  </svg>
+  </div>
+  ))}
+  </div>
 
  {/* FOCUS TIMER & STUDY GROUPS */}
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -581,93 +584,93 @@ export default function StudentPortal() {
  </div>
 
  {/* READING ACTIVITY & POPULAR CATEGORIES */}
- <div className="grid grid-cols-2 gap-6">
- {/* Reading Activity */}
- <div className="bg-white rounded-[24px] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] p-8 flex flex-col">
- <div className="flex justify-between items-center mb-6">
- <h3 className="text-[16px] font-black text-slate-800 ">Reading Activity</h3>
- <button onClick={() => setIsReportModalOpen(true)} className="text-[11px] font-black text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer">
-   <FileSpreadsheet className="w-3.5 h-3.5" /> Download Report
- </button>
- </div>
- <div className="flex items-center gap-8">
- <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
- <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
- <circle cx="50" cy="50" r="40" fill="none" stroke="#f1f5f9" strokeWidth="12" />
- <circle cx="50" cy="50" r="40" fill="none" stroke="#6366f1" strokeWidth="12" strokeDasharray="251.2" strokeDashoffset={251.2 * (1 - 0.72)} strokeLinecap="round" />
- </svg>
- <div className="absolute inset-0 flex flex-col items-center justify-center">
- <span className="text-[24px] font-black text-slate-800 leading-none">72%</span>
- <span className="text-[10px] font-bold text-slate-400">This Month</span>
- </div>
- </div>
- <div className="flex-1 space-y-5">
- <div className="flex items-center gap-3">
- <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center shrink-0">
- <BookOpen className="w-4 h-4 text-indigo-500" />
- </div>
- <div className="flex-1">
- <p className="text-[11px] font-bold text-slate-500">Books Read</p>
- <div className="flex justify-between items-end">
- <span className="text-[16px] font-black text-slate-800 ">{booksReadCount}</span>
- <span className="text-[9px] font-bold text-slate-400">+2 from last month</span>
- </div>
- </div>
- </div>
- <div className="flex items-center gap-3">
- <div className="w-8 h-8 rounded-full bg-cyan-50 flex items-center justify-center shrink-0">
- <BookCopy className="w-4 h-4 text-cyan-500" />
- </div>
- <div className="flex-1">
- <p className="text-[11px] font-bold text-slate-500">Pages Read</p>
- <div className="flex justify-between items-end">
- <span className="text-[16px] font-black text-slate-800 ">{pagesReadEst.toLocaleString()}</span>
- <span className="text-[9px] font-bold text-slate-400">+320 from last month</span>
- </div>
- </div>
- </div>
- <div className="flex items-center gap-3">
- <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
- <Clock className="w-4 h-4 text-rose-500" />
- </div>
- <div className="flex-1">
- <p className="text-[11px] font-bold text-slate-500">Reading Time</p>
- <div className="flex justify-between items-end">
- <span className="text-[16px] font-black text-slate-800 ">{readingTimeStr}</span>
- <span className="text-[9px] font-bold text-slate-400">+4h 30m from last month</span>
- </div>
- </div>
- </div>
- </div>
- </div>
- </div>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  {/* Reading Activity */}
+  <div className="bg-white rounded-[24px] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] p-6 md:p-8 flex flex-col">
+  <div className="flex justify-between items-center mb-6">
+  <h3 className="text-[16px] font-black text-slate-800">Reading Activity</h3>
+  <button onClick={() => setIsReportModalOpen(true)} className="text-[11px] font-black text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer">
+    <FileSpreadsheet className="w-3.5 h-3.5" /> Download Report
+  </button>
+  </div>
+  <div className="flex flex-col sm:flex-row items-center gap-6 md:gap-8">
+  <div className="relative w-28 h-28 md:w-32 md:h-32 flex items-center justify-center shrink-0">
+  <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="40" fill="none" stroke="#f1f5f9" strokeWidth="12" />
+  <circle cx="50" cy="50" r="40" fill="none" stroke="#6366f1" strokeWidth="12" strokeDasharray="251.2" strokeDashoffset={251.2 * (1 - 0.72)} strokeLinecap="round" />
+  </svg>
+  <div className="absolute inset-0 flex flex-col items-center justify-center">
+  <span className="text-[20px] md:text-[24px] font-black text-slate-800 leading-none">72%</span>
+  <span className="text-[9px] md:text-[10px] font-bold text-slate-400">This Month</span>
+  </div>
+  </div>
+  <div className="flex-1 w-full space-y-4 md:space-y-5">
+  <div className="flex items-center gap-3">
+  <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center shrink-0">
+  <BookOpen className="w-4 h-4 text-indigo-500" />
+  </div>
+  <div className="flex-1">
+  <p className="text-[11px] font-bold text-slate-500">Books Read</p>
+  <div className="flex justify-between items-end">
+  <span className="text-[15px] md:text-[16px] font-black text-slate-800">{booksReadCount}</span>
+  <span className="text-[9px] font-bold text-slate-400">+2 from last month</span>
+  </div>
+  </div>
+  </div>
+  <div className="flex items-center gap-3">
+  <div className="w-8 h-8 rounded-full bg-cyan-50 flex items-center justify-center shrink-0">
+  <BookCopy className="w-4 h-4 text-cyan-500" />
+  </div>
+  <div className="flex-1">
+  <p className="text-[11px] font-bold text-slate-500">Pages Read</p>
+  <div className="flex justify-between items-end">
+  <span className="text-[15px] md:text-[16px] font-black text-slate-800">{pagesReadEst.toLocaleString()}</span>
+  <span className="text-[9px] font-bold text-slate-400">+320 from last month</span>
+  </div>
+  </div>
+  </div>
+  <div className="flex items-center gap-3">
+  <div className="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
+  <Clock className="w-4 h-4 text-rose-500" />
+  </div>
+  <div className="flex-1">
+  <p className="text-[11px] font-bold text-slate-500">Reading Time</p>
+  <div className="flex justify-between items-end">
+  <span className="text-[15px] md:text-[16px] font-black text-slate-800">{readingTimeStr}</span>
+  <span className="text-[9px] font-bold text-slate-400">+4h 30m from last month</span>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
 
- {/* Popular Categories */}
- <div className="bg-white rounded-[24px] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] p-8 flex flex-col">
- <div className="flex justify-between items-center mb-6">
- <h3 className="text-[16px] font-black text-slate-800 ">Popular Categories</h3>
- <span className="text-[11px] font-bold text-indigo-500 cursor-pointer">View All</span>
- </div>
- <div className="space-y-4">
- {popularCats.map((cat, i) => (
- <div key={i} className="flex items-center gap-4">
- <div className={`w-8 h-8 rounded-lg ${cat.iconBg} flex items-center justify-center shrink-0`}>
- {cat.icon}
- </div>
- <div className="flex-1">
- <div className="flex justify-between items-center mb-1.5">
- <span className="text-[12px] font-bold text-slate-700">{cat.name}</span>
- <span className="text-[10px] font-bold text-slate-400">{cat.count}</span>
- </div>
- <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
- <div className={`h-full ${cat.color} rounded-full`} style={{width: `${cat.percent}%`}}></div>
- </div>
- </div>
- </div>
- ))}
- </div>
- </div>
- </div>
+  {/* Popular Categories */}
+  <div className="bg-white rounded-[24px] border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.02)] p-6 md:p-8 flex flex-col">
+  <div className="flex justify-between items-center mb-6">
+  <h3 className="text-[16px] font-black text-slate-800">Popular Categories</h3>
+  <span className="text-[11px] font-bold text-indigo-500 cursor-pointer">View All</span>
+  </div>
+  <div className="space-y-4">
+  {popularCats.map((cat, i) => (
+  <div key={i} className="flex items-center gap-4">
+  <div className={`w-8 h-8 rounded-lg ${cat.iconBg} flex items-center justify-center shrink-0`}>
+  {cat.icon}
+  </div>
+  <div className="flex-1">
+  <div className="flex justify-between items-center mb-1.5">
+  <span className="text-[12px] font-bold text-slate-700">{cat.name}</span>
+  <span className="text-[10px] font-bold text-slate-400">{cat.count}</span>
+  </div>
+  <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+  <div className={`h-full ${cat.color} rounded-full`} style={{width: `${cat.percent}%`}}></div>
+  </div>
+  </div>
+  </div>
+  ))}
+  </div>
+  </div>
+  </div>
 
  {/* SYLLABUS SHELF */}
  {syllabusBooks.length > 0 && (

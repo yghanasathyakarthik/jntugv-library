@@ -70,8 +70,8 @@ export default function Home() {
                 </div>
 
                 {/* Cards Container */}
-                <div className="absolute bottom-[-140px] left-1/2 -translate-x-1/2 w-[90%] max-w-5xl">
-                   <div className="grid grid-cols-1 md:grid-cols-4 gap-6 w-full">
+                <div className="w-full max-w-5xl mt-6 relative z-10 md:absolute md:bottom-[-140px] md:left-1/2 md:-translate-x-1/2 md:w-[90%]">
+                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 w-full">
                      {/* Card 1 */}
                      <div className="bg-[#fcfaff] border border-[#f3e8ff] rounded-[24px] p-6 flex flex-col items-center justify-center text-center shadow-[0_8px_30px_rgba(144,115,253,0.06)] backdrop-blur-xl relative overflow-hidden group">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#e9d5ff] to-[#d8b4fe] opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -120,8 +120,8 @@ export default function Home() {
              </div>
           </div>
           
-          {/* Added extra padding to replace arrow space */}
-          <div className="w-full h-24"></div>
+          {/* Spacing for desktop card offset */}
+          <div className="hidden md:block w-full h-32"></div>
 
         </div>
 
