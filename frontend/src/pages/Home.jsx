@@ -18,11 +18,19 @@ export default function Home() {
                 JNTUGV <span className="text-[#9073fd]">Central Library</span>
               </h1>
            </Link>
-           <div className="flex gap-4">
-              <Link to="/login" className="px-6 py-2.5 text-sm font-bold text-slate-700 hover:text-slate-900 transition-colors border border-slate-200 rounded-[14px] hover:bg-slate-50 flex items-center gap-2">
+           <div className="flex items-center gap-2 sm:gap-3">
+              <a 
+                href="/JNTUGV_Library_App.apk" 
+                download="JNTUGV_Library_App.apk"
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-[14px] transition-all flex items-center gap-1.5 shadow-sm"
+                title="Download Android App APK"
+              >
+                <Smartphone className="w-4 h-4 text-emerald-600 shrink-0" /> <span className="hidden xs:inline">Get</span> App
+              </a>
+              <Link to="/login" className="px-4 sm:px-5 py-2 text-xs sm:text-sm font-bold text-slate-700 hover:text-slate-900 transition-colors border border-slate-200 rounded-[14px] hover:bg-slate-50 flex items-center gap-1.5">
                 <User className="w-4 h-4" /> Sign In
               </Link>
-              <Link to="/register" className="px-6 py-2.5 text-sm font-bold bg-gradient-to-r from-[#9073fd] to-[#b360fb] text-white rounded-[14px] shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all flex items-center gap-2">
+              <Link to="/register" className="px-4 sm:px-5 py-2 text-xs sm:text-sm font-bold bg-gradient-to-r from-[#9073fd] to-[#b360fb] text-white rounded-[14px] shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all flex items-center gap-1.5">
                 <UserPlus className="w-4 h-4" /> Register
               </Link>
            </div>
@@ -263,12 +271,13 @@ export default function Home() {
                   </div>
                </div>
 
-               <div className="text-center md:text-right">
-                  <h4 className="text-indigo-400 font-bold uppercase tracking-widest text-sm mb-4">Quick Links</h4>
-                  <Link to="/login" className="block text-slate-400 hover:text-white font-medium mb-3 transition-colors">Student Login</Link>
-                  <Link to="/login" className="block text-slate-400 hover:text-white font-medium mb-3 transition-colors">Admin Login</Link>
-                  <Link to="#" className="block text-slate-400 hover:text-white font-medium transition-colors">Privacy & Policy</Link>
-               </div>
+                <div className="text-center md:text-right">
+                   <h4 className="text-indigo-400 font-bold uppercase tracking-widest text-sm mb-4">Quick Links</h4>
+                   <a href="/JNTUGV_Library_App.apk" download="JNTUGV_Library_App.apk" className="block text-emerald-400 hover:text-emerald-300 font-bold mb-3 transition-colors">📱 Download Android App (.apk)</a>
+                   <Link to="/login" className="block text-slate-400 hover:text-white font-medium mb-3 transition-colors">Student Login</Link>
+                   <Link to="/login" className="block text-slate-400 hover:text-white font-medium mb-3 transition-colors">Admin Login</Link>
+                   <Link to="#" className="block text-slate-400 hover:text-white font-medium transition-colors">Privacy & Policy</Link>
+                </div>
             </div>
          </div>
 
