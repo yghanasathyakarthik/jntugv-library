@@ -389,20 +389,20 @@ export default function AdminPortal() {
   );
 
   const TopBar = () => (
-    <div className="flex flex-col md:flex-row items-center justify-between px-4 md:px-6 w-full pt-4 md:pt-6 pb-2 gap-4 md:gap-6">
+    <div className="flex flex-col md:flex-row items-center justify-between px-2 md:px-6 w-full pt-3 md:pt-6 pb-2 gap-3 md:gap-6">
       {/* Left side: Profile & Greeting */}
-      <div className="flex flex-col gap-1 shrink-0 z-10 w-full md:w-auto text-center md:text-left">
-        <h1 className="text-xl md:text-2xl font-black text-slate-800 tracking-tight">Dashboard Overview</h1>
-        <div className="flex items-center justify-center md:justify-start gap-3 mt-2 bg-white rounded-full py-1.5 pl-1.5 pr-5 border border-slate-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] w-fit mx-auto md:mx-0 hover:shadow-md transition-all cursor-pointer">
-          <div className="w-8 h-8 rounded-full overflow-hidden shrink-0">
+      <div className="flex flex-col gap-1 shrink-0 z-10 w-full md:w-auto text-left">
+        <h1 className="text-lg md:text-2xl font-black text-slate-800 tracking-tight">Dashboard Overview</h1>
+        <div className="flex items-center gap-3 mt-1 bg-white rounded-full py-1 pl-1 pr-4 border border-slate-100 shadow-sm w-fit hover:shadow-md transition-all cursor-pointer">
+          <div className="w-7 h-7 md:w-8 md:h-8 rounded-full overflow-hidden shrink-0">
             <img src={localPhoto || user?.profile_photo || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"} alt="Profile" className="w-full h-full object-cover" />
           </div>
-          <span className="text-sm font-bold text-slate-700">{user?.name || 'System Admin'}</span>
+          <span className="text-xs md:text-sm font-bold text-slate-700">{user?.name || 'System Admin'}</span>
         </div>
       </div>
 
       {/* Right side: Beautiful Framed Photo */}
-      <div className="w-full md:flex-1 h-32 md:h-36 max-w-[600px] rounded-[28px] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.06)] border-4 border-white md:ml-auto relative group">
+      <div className="hidden sm:block w-full md:flex-1 h-28 md:h-36 max-w-[600px] rounded-[24px] md:rounded-[28px] overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.06)] border-4 border-white md:ml-auto relative group">
         <img src="/library-building.jpg" alt="Library Building" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onError={(e) => {e.target.src="https://images.unsplash.com/photo-1568667256549-094345857637?auto=format&fit=crop&w=1200&q=80"}} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/5 to-transparent opacity-80"></div>
         <div className="absolute bottom-4 left-5 flex items-center gap-2">
