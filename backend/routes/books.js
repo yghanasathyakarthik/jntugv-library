@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
         }
 
         const finalQuery = `
-            SELECT b.book_id AS id, b.title, b.isbn_number AS isbn, b.publication_year as year, b.edition, b.status, 
+            SELECT DISTINCT ON (b.book_id) b.book_id AS id, b.title, b.isbn_number AS isbn, b.publication_year as year, b.edition, b.status, 
                    b.total_copies, b.available_copies,
                    a.first_name || ' ' || a.last_name AS author,
                    c.name_slug AS category,
@@ -26,19 +26,11 @@ router.get('/', async (req, res) => {
             LEFT JOIN BOOK_ASSET_MAP bam ON b.book_id = bam.book_id
             LEFT JOIN PHYSICAL_LOCATIONS pl ON bam.location_id = pl.location_id
             ${query}
+            ORDER BY b.book_id
         `;
         const result = await pool.query(finalQuery, values);
         
-        // Remove duplicates if joining with multiple asset maps
-        const uniqueBooks = [];
-        const seen = new Set();
-        for (const row of result.rows) {
-           if (!seen.has(row.id)) {
-              seen.add(row.id);
-              uniqueBooks.push(row);
-           }
-        }
-        res.json(uniqueBooks);
+        res.json(result.rows);
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Server error fetching books' });

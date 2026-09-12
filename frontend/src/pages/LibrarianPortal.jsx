@@ -141,7 +141,7 @@ export default function LibrarianPortal() {
     fetchAppeals();
     fetchReservations();
     fetchFines();
-    const interval = setInterval(() => { fetchStats(); fetchExplorerData(); fetchAppeals(); fetchReservations(); fetchFines(); }, 10000);
+    const interval = setInterval(() => { fetchStats(); fetchAppeals(); fetchReservations(); }, 60000);
     return () => clearInterval(interval);
   }, []);
 

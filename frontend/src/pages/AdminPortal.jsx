@@ -114,7 +114,7 @@ export default function AdminPortal() {
   useEffect(() => {
     fetchStats();
     fetchExplorerData();
-    const interval = setInterval(() => { fetchStats(); fetchExplorerData(); }, 10000);
+    const interval = setInterval(() => { fetchStats(); }, 60000);
     
     // Request notification permission for PWA
     if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
