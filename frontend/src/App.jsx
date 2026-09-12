@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
+import axios from 'axios';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -28,6 +29,16 @@ const PortalLayout = ({ children }) => {
 
 function AppRoutes() {
     const { user, logout } = useContext(AuthContext);
+
+    useEffect(() => {
+        // Pre-warm live backend server immediately on launch
+        axios.get('/api/health').catch(() => {});
+        // Keep backend active while user is in the app
+        const keepAlive = setInterval(() => {
+            axios.get('/api/health').catch(() => {});
+        }, 9 * 60 * 1000);
+        return () => clearInterval(keepAlive);
+    }, []);
     
     // Failsafe: If localStorage was corrupted by the bug, clear it to prevent infinite loop.
     if (user && !user.role) {

@@ -1,6 +1,6 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useMemo, useDeferredValue } from 'react';
 import axios from 'axios';
-import { Search, MapPin, Map, Navigation, QrCode, Bookmark, BookOpen, Clock, AlertTriangle, Trophy, Download, CheckCircle, CreditCard, Sparkles, User as UserIcon, Users, LayoutDashboard, Search as SearchIcon, BookCopy, Calendar, Bell, Settings, LogOut, ChevronRight, Check, MessageSquare, Send, History, Barcode, Camera, Zap, Keyboard, XCircle, AlertCircle, ChevronDown, Library, Scan, Bot, Moon, MoreHorizontal, Briefcase, Laptop, Flame, Menu, X } from 'lucide-react';
+import { Search, MapPin, Map, Navigation, QrCode, Bookmark, BookOpen, Clock, AlertTriangle, Trophy, Download, CheckCircle, CreditCard, Sparkles, User as UserIcon, Users, LayoutDashboard, Search as SearchIcon, BookCopy, Calendar, Bell, Settings, LogOut, ChevronRight, ChevronLeft, Check, MessageSquare, Send, History, Barcode, Camera, Zap, Keyboard, XCircle, AlertCircle, ChevronDown, Library, Scan, Bot, Moon, MoreHorizontal, Briefcase, Laptop, Flame, Menu, X } from 'lucide-react';
 import QRCode from 'react-qr-code';
 import { AuthContext } from '../context/AuthContext';
 import Scanner from '../components/Scanner';
@@ -41,19 +41,41 @@ export default function StudentPortal() {
  const [totalBooks, setTotalBooks] = useState(0);
  const [availableBooks, setAvailableBooks] = useState(0);
 
- // Appeals
- const [searchCategory, setSearchCategory] = useState('');
+  // Appeals
+  const [searchCategory, setSearchCategory] = useState('');
+  const [searchPage, setSearchPage] = useState(1);
+  const BOOKS_PER_PAGE = 24;
 
- // Derived filtered books for search tab
- const filteredBooks = books.filter(book => {
-   const matchesSearch = !searchTerm || 
-     (book.title?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-     (book.author?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-     (book.isbn?.toLowerCase() || '').includes(searchTerm.toLowerCase());
-   const matchesCategory = !searchCategory || 
-     (book.category?.toLowerCase() === searchCategory.toLowerCase());
-   return matchesSearch && matchesCategory;
- });
+  const deferredSearch = useDeferredValue(searchTerm);
+
+  // High performance memoized filtered books for search tab
+  const filteredBooks = useMemo(() => {
+    const term = (deferredSearch || '').toLowerCase().trim();
+    const cat = (searchCategory || '').toLowerCase().trim();
+    if (!term && !cat) return books;
+
+    return books.filter(book => {
+      const matchesSearch = !term || 
+        (book.title?.toLowerCase() || '').includes(term) ||
+        (book.author?.toLowerCase() || '').includes(term) ||
+        (book.isbn?.toLowerCase() || '').includes(term) ||
+        (book.id?.toLowerCase() || '').includes(term);
+      const matchesCategory = !cat || 
+        (book.category?.toLowerCase() === cat);
+      return matchesSearch && matchesCategory;
+    });
+  }, [books, deferredSearch, searchCategory]);
+
+  const totalPages = Math.ceil(filteredBooks.length / BOOKS_PER_PAGE) || 1;
+  const paginatedBooks = useMemo(() => {
+    const start = (searchPage - 1) * BOOKS_PER_PAGE;
+    return filteredBooks.slice(start, start + BOOKS_PER_PAGE);
+  }, [filteredBooks, searchPage]);
+
+  // Reset to page 1 on search / category filter change
+  useEffect(() => {
+    setSearchPage(1);
+  }, [deferredSearch, searchCategory]);
 
  const [appeals, setAppeals] = useState([]);
  const [appealType, setAppealType] = useState('New Book Request');
@@ -86,15 +108,37 @@ export default function StudentPortal() {
  } catch (err) { console.error(err); }
  };
 
- const fetchBooksData = async () => {
- try {
- setLoading(true);
- const res = await axios.get('/api/books');
- setBooks(res.data);
- setTotalBooks(res.data.length);
- setAvailableBooks(res.data.filter(b => b.status === 'Available').length);
- } catch (err) { console.error(err); } finally { setLoading(false); }
- };
+  const fetchBooksData = async () => {
+    try {
+      // 1. Instantly hydrate from local cache if available (0ms load time)
+      const cached = localStorage.getItem('jntugv_books_cache');
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setBooks(parsed);
+            setTotalBooks(parsed.length);
+            setAvailableBooks(parsed.filter(b => b.status === 'Available').length);
+          }
+        } catch(e) {}
+      } else {
+        setLoading(true);
+      }
+
+      // 2. Fetch fresh catalog from API in the background
+      const res = await axios.get('/api/books');
+      setBooks(res.data);
+      setTotalBooks(res.data.length);
+      setAvailableBooks(res.data.filter(b => b.status === 'Available').length);
+      try {
+        localStorage.setItem('jntugv_books_cache', JSON.stringify(res.data));
+      } catch(e) {}
+    } catch (err) { 
+      console.error(err); 
+    } finally { 
+      setLoading(false); 
+    }
+  };
 
  const fetchAppeals = async () => {
  try {
@@ -899,11 +943,16 @@ export default function StudentPortal() {
  </div>
 
  <div className="flex items-center justify-between mb-4">
- <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full">{filteredBooks.length} results found</p>
- </div>
- 
- <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6">
- {filteredBooks.map(book => (
+    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-full">{filteredBooks.length} results found</p>
+    {totalPages > 1 && (
+      <div className="text-xs font-bold text-slate-500">
+        Page <span className="text-indigo-600 font-extrabold">{searchPage}</span> of <span className="font-extrabold text-slate-700">{totalPages}</span>
+      </div>
+    )}
+  </div>
+  
+  <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-6">
+  {paginatedBooks.map(book => (
  <div key={book.id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all flex flex-col group relative overflow-hidden">
  {/* Decorative background blur */}
  <div className="absolute -right-6 -top-6 w-32 h-32 bg-indigo-50 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -952,6 +1001,40 @@ export default function StudentPortal() {
  </div>
  ))}
  </div>
+
+  {/* Pagination Controls */}
+  {totalPages > 1 && (
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-100 mt-6 bg-white p-4 rounded-2xl shadow-sm">
+      <p className="text-xs font-bold text-slate-500 text-center sm:text-left">
+        Showing <span className="text-indigo-600 font-extrabold">{((searchPage - 1) * BOOKS_PER_PAGE) + 1}</span> - <span className="text-indigo-600 font-extrabold">{Math.min(searchPage * BOOKS_PER_PAGE, filteredBooks.length)}</span> of <span className="font-extrabold text-slate-700">{filteredBooks.length}</span> books
+      </p>
+      <div className="flex items-center gap-2">
+        <button
+          disabled={searchPage === 1}
+          onClick={() => {
+            setSearchPage(p => Math.max(1, p - 1));
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+          }}
+          className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 shadow-sm transition-all active:scale-95"
+        >
+          <ChevronLeft className="w-4 h-4" /> Previous
+        </button>
+        <span className="text-xs font-black text-indigo-700 px-3 py-1.5 bg-indigo-50 border border-indigo-100 rounded-xl">
+          Page {searchPage} of {totalPages}
+        </span>
+        <button
+          disabled={searchPage === totalPages}
+          onClick={() => {
+            setSearchPage(p => Math.min(totalPages, p + 1));
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+          }}
+          className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 shadow-sm transition-all active:scale-95"
+        >
+          Next <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  )}
  </div>
  )}
 

@@ -58,10 +58,18 @@ router.post('/search-history', async (req, res) => {
     }
 });
 
+const recCache = new Map(); // userId -> { data, expires }
+
 // GET /api/ai/recommendations/:userId - Smart Recommendations
 router.get('/recommendations/:userId', async (req, res) => {
     try {
         const { userId } = req.params;
+        
+        // Fast cache check (15 min cache)
+        const cached = recCache.get(userId);
+        if (cached && cached.expires > Date.now()) {
+            return res.json(cached.data);
+        }
 
         // Fetch user's borrowed books
         const historyQuery = await pool.query(`
@@ -76,13 +84,14 @@ router.get('/recommendations/:userId', async (req, res) => {
 
         const borrowed = historyQuery.rows;
         
-        // Fetch full available catalog
+        // Fetch available catalog (limited to 60 books for fast AI reasoning)
         const booksQuery = await pool.query(`
             SELECT b.book_id, b.title, a.first_name || ' ' || a.last_name as author, c.name_slug as category
             FROM BOOKS b
             JOIN AUTHORS a ON b.author_id = a.author_id
             JOIN CATEGORIES c ON b.category_id = c.category_id
             WHERE b.status = 'Available'
+            LIMIT 60
         `);
 
         // Filter out books they already borrowed
@@ -90,8 +99,9 @@ router.get('/recommendations/:userId', async (req, res) => {
         const availableCatalog = booksQuery.rows.filter(b => !borrowedTitles.includes(b.title));
 
         if (borrowed.length === 0) {
-            // No history, return random 3 available books
-            return res.json(availableCatalog.slice(0, 3));
+            const fallback = availableCatalog.slice(0, 3);
+            recCache.set(userId, { data: fallback, expires: Date.now() + 15 * 60 * 1000 });
+            return res.json(fallback);
         }
 
         // Fetch user's recent searches
@@ -102,8 +112,8 @@ router.get('/recommendations/:userId', async (req, res) => {
         `, [userId]);
         const recentSearches = searchRes.rows.map(r => r.search_term).join(', ');
 
-        const borrowedContext = borrowed.map(b => `- ${b.title} (${b.category})`).join('\n');
-        const catalogContext = availableCatalog.map(b => `[ID: ${b.book_id}] ${b.title} by ${b.author} (${b.category})`).join('\n');
+        const borrowedContext = borrowed.slice(0, 5).map(b => `- ${b.title} (${b.category})`).join('\n');
+        const catalogContext = availableCatalog.slice(0, 30).map(b => `[ID: ${b.book_id}] ${b.title} by ${b.author} (${b.category})`).join('\n');
 
         let userContext = `The user has previously borrowed:\n${borrowedContext}`;
         if (recentSearches) {
@@ -131,8 +141,11 @@ router.get('/recommendations/:userId', async (req, res) => {
         }
 
         // Return the actual book objects
-        const recommendations = availableCatalog.filter(b => recommendedIds.includes(b.book_id));
-        res.json(recommendations);
+        const recommendations = availableCatalog.filter(b => recommendedIds.includes(b.book_id)).slice(0, 3);
+        const finalResults = recommendations.length > 0 ? recommendations : availableCatalog.slice(0, 3);
+        
+        recCache.set(userId, { data: finalResults, expires: Date.now() + 15 * 60 * 1000 });
+        res.json(finalResults);
     } catch (err) {
         console.error("AI Recommendation Error:", err);
         res.status(500).json({ error: 'AI Recommendation failed' });

@@ -1,8 +1,8 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useMemo, useDeferredValue } from 'react';
 import axios from 'axios';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement, Filler } from 'chart.js';
 import { Bar, Doughnut, Line } from 'react-chartjs-2';
-import { Library, Users, BookOpen, AlertCircle, ShieldAlert, Download, Database, LayoutDashboard, PlusCircle, ArrowLeftRight, ClipboardCheck, FileText, Settings as SettingsIcon, LogOut, CheckCircle, Search, QrCode, MapPin, MessageSquare, Bell, Moon, XCircle, Navigation, Calendar, Menu, X } from 'lucide-react';
+import { Library, Users, BookOpen, AlertCircle, ShieldAlert, Download, Database, LayoutDashboard, PlusCircle, ArrowLeftRight, ClipboardCheck, FileText, Settings as SettingsIcon, LogOut, CheckCircle, Search, QrCode, MapPin, MessageSquare, Bell, Moon, XCircle, Navigation, Calendar, Menu, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import Scanner from '../components/Scanner';
 import AuditModal from '../components/AuditModal';
@@ -89,6 +89,34 @@ export default function LibrarianPortal() {
   const [allUsers, setAllUsers] = useState([]);
   const [allLogs, setAllLogs] = useState([]);
   const [allBooks, setAllBooks] = useState([]);
+
+  // Manage Books Search & Pagination State
+  const [manageSearch, setManageSearch] = useState('');
+  const [managePage, setManagePage] = useState(1);
+  const MANAGE_BOOKS_PER_PAGE = 25;
+  const deferredManageSearch = useDeferredValue(manageSearch);
+
+  const filteredManageBooks = useMemo(() => {
+    const term = (deferredManageSearch || '').toLowerCase().trim();
+    if (!term) return allBooks;
+    return allBooks.filter(b => 
+      (b.title?.toLowerCase() || '').includes(term) ||
+      (b.author?.toLowerCase() || '').includes(term) ||
+      (b.asset_id?.toLowerCase() || '').includes(term) ||
+      (b.isbn?.toLowerCase() || '').includes(term) ||
+      (b.id?.toLowerCase() || '').includes(term)
+    );
+  }, [allBooks, deferredManageSearch]);
+
+  const totalManagePages = Math.ceil(filteredManageBooks.length / MANAGE_BOOKS_PER_PAGE) || 1;
+  const paginatedManageBooks = useMemo(() => {
+    const start = (managePage - 1) * MANAGE_BOOKS_PER_PAGE;
+    return filteredManageBooks.slice(start, start + MANAGE_BOOKS_PER_PAGE);
+  }, [filteredManageBooks, managePage]);
+
+  useEffect(() => {
+    setManagePage(1);
+  }, [deferredManageSearch]);
 
   // Add Book State
   const [newBook, setNewBook] = useState({ title: '', author: '', isbn: '', section: 'Software Engineering', room: 'Room 02', rack: '', shelf: '', count: 1 });
@@ -215,6 +243,17 @@ export default function LibrarianPortal() {
   };
 
   const fetchExplorerData = async () => {
+    // 1. Instantly populate from local cache if present
+    const cached = localStorage.getItem('jntugv_books_cache');
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setAllBooks(parsed);
+        }
+      } catch(e) {}
+    }
+
     try {
       const [usersRes, logsRes, booksRes] = await Promise.all([
         axios.get('/api/users'),
@@ -224,6 +263,9 @@ export default function LibrarianPortal() {
       setAllUsers(usersRes.data);
       setAllLogs(logsRes.data);
       setAllBooks(booksRes.data);
+      try {
+        localStorage.setItem('jntugv_books_cache', JSON.stringify(booksRes.data));
+      } catch(e) {}
     } catch (err) {
       console.error('Failed to fetch explorer data', err);
     }
@@ -870,11 +912,23 @@ export default function LibrarianPortal() {
           {/* MANAGE BOOKS TAB */}
           {activeTab === 'manage' && (
             <div className="space-y-6 animate-in fade-in duration-300">
-               <div className="bg-white p-8 rounded-[24px] border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+               <div className="bg-white p-6 md:p-8 rounded-[24px] border border-slate-100 shadow-[0_4px_24px_rgba(0,0,0,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
                  <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-50 pointer-events-none"></div>
                  <div className="relative z-10">
-                   <h2 className="text-2xl font-black text-slate-800 mb-2">Manage Books Inventory</h2>
-                   <p className="text-slate-500 font-medium">Global catalog of all books in the database.</p>
+                   <h2 className="text-2xl font-black text-slate-800 mb-1">Manage Books Inventory</h2>
+                   <p className="text-slate-500 text-xs md:text-sm font-medium">Quick search and management across {allBooks.length} books.</p>
+                 </div>
+                 <div className="relative z-10 w-full md:w-80">
+                   <div className="relative">
+                     <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                     <input 
+                       type="text"
+                       value={manageSearch}
+                       onChange={e => setManageSearch(e.target.value)}
+                       placeholder="Filter title, author, barcode..."
+                       className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-10 pr-4 text-xs font-semibold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                     />
+                   </div>
                  </div>
                </div>
                
@@ -891,7 +945,7 @@ export default function LibrarianPortal() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100/50">
-                        {allBooks.map((b) => (
+                        {paginatedManageBooks.map((b) => (
                           <tr key={b.id} className="hover:bg-slate-50/30 transition-colors group">
                             <td className="px-6 py-5">
                                <p className="font-bold text-slate-800 text-sm group-hover:text-indigo-600 transition-colors">{b.title}</p>
@@ -904,7 +958,7 @@ export default function LibrarianPortal() {
                                <div className="flex items-center gap-1.5 text-slate-500 text-xs font-bold">
                                  <MapPin className="w-3.5 h-3.5 text-indigo-400"/>
                                  {b.room} • Rack {b.rack} • Shelf {b.shelf}
-                               </div>
+                                </div>
                             </td>
                             <td className="px-6 py-5">
                               <span className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${b.available_copies > 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
@@ -921,6 +975,34 @@ export default function LibrarianPortal() {
                       </tbody>
                     </table>
                   </div>
+
+                  {/* Pagination Footer */}
+                  {totalManagePages > 1 && (
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 border-t border-slate-100 bg-slate-50/50">
+                      <p className="text-xs font-bold text-slate-500">
+                        Showing <span className="text-indigo-600 font-extrabold">{((managePage - 1) * MANAGE_BOOKS_PER_PAGE) + 1}</span> - <span className="text-indigo-600 font-extrabold">{Math.min(managePage * MANAGE_BOOKS_PER_PAGE, filteredManageBooks.length)}</span> of <span className="font-extrabold text-slate-700">{filteredManageBooks.length}</span> books
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <button
+                          disabled={managePage === 1}
+                          onClick={() => setManagePage(p => Math.max(1, p - 1))}
+                          className="px-3 py-1.5 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 shadow-sm transition-all active:scale-95"
+                        >
+                          <ChevronLeft className="w-3.5 h-3.5" /> Prev
+                        </button>
+                        <span className="text-xs font-black text-indigo-700 px-3 py-1 bg-indigo-50 border border-indigo-100 rounded-lg">
+                          Page {managePage} of {totalManagePages}
+                        </span>
+                        <button
+                          disabled={managePage === totalManagePages}
+                          onClick={() => setManagePage(p => Math.min(totalManagePages, p + 1))}
+                          className="px-3 py-1.5 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1 shadow-sm transition-all active:scale-95"
+                        >
+                          Next <ChevronRight className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                </div>
             </div>
           )}

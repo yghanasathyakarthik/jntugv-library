@@ -30,6 +30,7 @@ router.get('/', async (req, res) => {
         `;
         const result = await pool.query(finalQuery, values);
         
+        res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
         res.json(result.rows);
     } catch (err) {
         console.error(err);

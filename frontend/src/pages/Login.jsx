@@ -1,18 +1,36 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
-import { ShieldCheck, Users, User, Lock, Eye, BookOpen, Barcode, MapPin, ArrowLeft, LogIn, AlertTriangle } from 'lucide-react';
+import { ShieldCheck, Users, User, Lock, Eye, BookOpen, Barcode, MapPin, ArrowLeft, LogIn, AlertTriangle, Loader2 } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [wakingServer, setWakingServer] = useState(false);
   const [activeTab, setActiveTab] = useState('student');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
+
+  useEffect(() => {
+    // Eagerly wake up backend server while user is filling out the form
+    axios.get('/api/health').catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    let timer;
+    if (isLoading) {
+      timer = setTimeout(() => {
+        setWakingServer(true);
+      }, 1200);
+    } else {
+      setWakingServer(false);
+    }
+    return () => clearTimeout(timer);
+  }, [isLoading]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -119,12 +137,24 @@ export default function Login() {
                 disabled={isLoading}
                 className="w-full bg-gradient-to-r from-[#9073fd] to-[#b360fb] text-white py-4 rounded-[14px] text-[13px] font-bold shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:-translate-y-0.5 active:scale-95 transition-all disabled:opacity-70 flex items-center justify-center gap-2 mt-2"
               >
-                {isLoading ? 'Authenticating...' : (
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin shrink-0" />
+                    {wakingServer ? 'Connecting to Cloud...' : 'Authenticating...'}
+                  </>
+                ) : (
                    <>
                       <LogIn className="w-4 h-4" /> Login as {activeTab === 'student' ? 'Student' : 'Admin'}
                    </>
                 )}
               </button>
+
+              {wakingServer && (
+                <div className="flex items-center justify-center gap-2 p-2.5 bg-indigo-50/90 rounded-xl border border-indigo-100 text-indigo-700 text-xs font-medium animate-pulse mt-2 text-center">
+                  <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0 text-indigo-500" />
+                  <span>Waking up cloud database (takes ~15-20s on first load)...</span>
+                </div>
+              )}
             </form>
 
             <div className="text-center pt-8">

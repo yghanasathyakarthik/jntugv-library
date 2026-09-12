@@ -7,11 +7,14 @@ const poolConfig = {
   database: process.env.DB_NAME || 'library_db',
   password: process.env.DB_PASSWORD || '123456',
   port: process.env.DB_PORT || 5432,
+  max: 20, // concurrency limit
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
 };
 
 if (process.env.DATABASE_URL) {
   poolConfig.connectionString = process.env.DATABASE_URL;
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === 'production' || process.env.DATABASE_URL.includes('neon.tech')) {
     poolConfig.ssl = { rejectUnauthorized: false };
   }
 }

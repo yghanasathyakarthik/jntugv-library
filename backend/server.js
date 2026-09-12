@@ -1,8 +1,10 @@
 const express = require('express');
 const cors = require('cors');
+const compression = require('compression');
 require('dotenv').config();
 
 const app = express();
+app.use(compression());
 app.use(cors());
 app.use(express.json());
 
@@ -88,7 +90,20 @@ app.listen(PORT, async () => {
         `);
         // Force alter just in case it was created with INTEGER
         await pool.query(`ALTER TABLE book_swipes ALTER COLUMN book_id TYPE VARCHAR(50);`).catch(() => {});
-        console.log("Database tables verified/created.");
+        
+        // High-performance query indexes for 5,000+ books & fast user lookups
+        await pool.query(`
+            CREATE INDEX IF NOT EXISTS idx_books_title ON BOOKS(title);
+            CREATE INDEX IF NOT EXISTS idx_books_book_id ON BOOKS(book_id);
+            CREATE INDEX IF NOT EXISTS idx_users_email ON USERS(email);
+            CREATE INDEX IF NOT EXISTS idx_users_barcode ON USERS(barcode_id);
+            CREATE INDEX IF NOT EXISTS idx_book_asset_map_book_id ON BOOK_ASSET_MAP(book_id);
+            CREATE INDEX IF NOT EXISTS idx_book_asset_map_location_id ON BOOK_ASSET_MAP(location_id);
+            CREATE INDEX IF NOT EXISTS idx_issuance_logs_user ON ISSUANCE_LOGS(user_identifier_string);
+            CREATE INDEX IF NOT EXISTS idx_issuance_logs_asset ON ISSUANCE_LOGS(asset_id);
+        `).catch(e => console.warn("Index init note:", e.message));
+
+        console.log("Database tables & indexes verified/created.");
     } catch (e) {
         console.error("Failed to init tables:", e.message);
     }
