@@ -19,25 +19,40 @@ export default function AdminPortal() {
   const [predictiveStats, setPredictiveStats] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const handleExportCSV = () => {
+    const handleExportCSV = async () => {
     if (!stats) return;
-    const csvContent = "data:text/csv;charset=utf-8," 
-        + "Metric,Value\n"
+    const csvContent = "Metric,Value\n" 
         + `Total Books,${stats.totalBooks}\n`
         + `Available,${stats.availableBooks}\n`
         + `Issued,${stats.issuedBooks}\n`
         + `Missing,${stats.missingBooks}\n`;
     
-    const encodedUri = encodeURI(csvContent);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const filename = "library_analytics_report.csv";
+
+    if (navigator.share && navigator.canShare) {
+      const file = new File([blob], filename, { type: 'text/csv' });
+      if (navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: 'Analytics Report' });
+          return;
+        } catch (err) {
+          console.log('Share canceled', err);
+        }
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "library_analytics_report.csv");
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    if (typeof URL.revokeObjectURL === 'function') URL.revokeObjectURL(url);
   };
 
-  const handleExportStudentsReport = (timeframe = 'weekly') => {
+  const handleExportStudentsReport = async (timeframe = 'weekly') => {
     const today = new Date();
     let timeframeLabel = 'Weekly Report (Past 7 Days)';
     let factor = 0.25;
@@ -76,14 +91,29 @@ export default function AdminPortal() {
       csv += `${idx + 1},"${stu.roll_no || stu.barcode_id || 'N/A'}","${(stu.name || '').replace(/"/g, '""')}","${stu.department || 'Computer Science'}","${stu.semester || 'Year 3 Sem 1'}",${timeframeHrs},${timeframeMins},${totalBorrowed},${totalReturned},${activeIssued},${stu.fines || '0.00'},${stu.score || 100},"Active Reader"\n`;
     });
 
+        const filename = `Students_Library_${timeframe.toUpperCase()}_Master_Report.csv`;
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    
+    if (navigator.share && navigator.canShare) {
+      const file = new File([blob], filename, { type: 'text/csv' });
+      if (navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: 'Student Report' });
+          return;
+        } catch (err) {
+          console.log('Share canceled', err);
+        }
+      }
+    }
+
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `Students_Library_${timeframe.toUpperCase()}_Master_Report.csv`);
+    link.setAttribute('download', filename);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    if (typeof URL.revokeObjectURL === 'function') URL.revokeObjectURL(url);
   };
 
   // Explorer Data
