@@ -42,7 +42,7 @@ export default function AdminPortal() {
       }
     }
 
-    const url = URL.createObjectURL(blob);
+        const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);
     link.setAttribute("download", filename);
@@ -50,6 +50,14 @@ export default function AdminPortal() {
     link.click();
     document.body.removeChild(link);
     if (typeof URL.revokeObjectURL === 'function') URL.revokeObjectURL(url);
+    
+    // Aggressive mobile fallback for bare WebViews: Copy to clipboard
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(csvContent || csv);
+        alert("If the download didn't start, the data has been copied to your clipboard! You can paste it into Notes or Excel.");
+      }
+    } catch(e) {}
   };
 
   const handleExportStudentsReport = async (timeframe = 'weekly') => {
@@ -106,14 +114,22 @@ export default function AdminPortal() {
       }
     }
 
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', filename);
+        const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     if (typeof URL.revokeObjectURL === 'function') URL.revokeObjectURL(url);
+    
+    // Aggressive mobile fallback for bare WebViews: Copy to clipboard
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(csvContent || csv);
+        alert("If the download didn't start, the data has been copied to your clipboard! You can paste it into Notes or Excel.");
+      }
+    } catch(e) {}
   };
 
   // Explorer Data

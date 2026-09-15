@@ -9,29 +9,29 @@ export default function Home() {
       <div className="mx-4 md:mx-8 my-4 md:my-8 bg-white rounded-[40px] shadow-[0_8px_40px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col relative z-10">
         
         {/* Navbar */}
-        <div className="flex justify-between items-center px-6 md:px-12 py-6">
-           <Link to="/" className="flex items-center gap-4 group">
-              <div className="w-14 h-14 bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] flex items-center justify-center border border-[#e2e8f0] p-1.5 shrink-0 overflow-hidden">
+        <div className="flex flex-col md:flex-row justify-between items-center px-4 md:px-12 py-6 gap-4">
+           <Link to="/" className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 group">
+              <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-2xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] flex items-center justify-center border border-[#e2e8f0] p-1.5 shrink-0 overflow-hidden">
                  <img src="/jntugv-logo.png" alt="JNTUGV" className="w-full h-full object-contain " />
               </div>
-              <h1 className="text-[28px] font-black text-slate-800 tracking-tight">
-                JNTUGV <span className="text-[#9073fd]">Central Library</span>
+              <h1 className="text-[22px] sm:text-[28px] font-black text-slate-800 tracking-tight text-center sm:text-left">
+                JNTUGV <span className="text-[#9073fd] block sm:inline">Central Library</span>
               </h1>
            </Link>
-           <div className="flex items-center gap-2 sm:gap-3">
+           <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 w-full md:w-auto">
               <a 
                 href="/JNTUGV_Library_App.apk" 
                 download="JNTUGV_Library_App.apk"
-                className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-[14px] transition-all flex items-center gap-1.5 shadow-sm"
+                className="px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-[14px] transition-all flex items-center gap-1.5 shadow-sm whitespace-nowrap"
                 title="Download Android App APK"
               >
-                <Smartphone className="w-4 h-4 text-emerald-600 shrink-0" /> <span className="hidden xs:inline">Get</span> App
+                <Smartphone className="w-4 h-4 text-emerald-600 shrink-0" /> <span>Get App</span>
               </a>
-              <Link to="/login" className="px-4 sm:px-5 py-2 text-xs sm:text-sm font-bold text-slate-700 hover:text-slate-900 transition-colors border border-slate-200 rounded-[14px] hover:bg-slate-50 flex items-center gap-1.5">
-                <User className="w-4 h-4" /> Sign In
+              <Link to="/login" className="px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-bold text-slate-700 hover:text-slate-900 transition-colors border border-slate-200 rounded-[14px] hover:bg-slate-50 flex items-center gap-1.5 whitespace-nowrap">
+                <User className="w-4 h-4 shrink-0" /> Sign In
               </Link>
-              <Link to="/register" className="px-4 sm:px-5 py-2 text-xs sm:text-sm font-bold bg-gradient-to-r from-[#9073fd] to-[#b360fb] text-white rounded-[14px] shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all flex items-center gap-1.5">
-                <UserPlus className="w-4 h-4" /> Register
+              <Link to="/register" className="px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-bold bg-gradient-to-r from-[#9073fd] to-[#b360fb] text-white rounded-[14px] shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all flex items-center gap-1.5 whitespace-nowrap">
+                <UserPlus className="w-4 h-4 shrink-0" /> Register
               </Link>
            </div>
         </div>
