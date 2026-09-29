@@ -30,6 +30,15 @@ body {
   100% { background-position: 0% 50%; }
 }
 
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spinSlow 24s linear infinite;
+}
+
 .input-premium {
   @apply w-full bg-white border border-slate-200 rounded-sm px-5 py-3.5 text-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary shadow-sm transition-all;
 }

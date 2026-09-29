@@ -1,4 +1,4 @@
-import { MapPin, Navigation, QrCode, Bookmark, BookOpen, Library, GraduationCap, Globe, BookMarked, ShieldCheck, Zap, Laptop, Smartphone, Users, User, UserPlus } from 'lucide-react';
+import { MapPin, Navigation, QrCode, Bookmark, BookOpen, Library, GraduationCap, Globe, BookMarked, ShieldCheck, Zap, Laptop, Smartphone, Users, User, UserPlus, Sparkles, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Home() {
@@ -221,6 +221,97 @@ export default function Home() {
                <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-[32px] blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
                <img src="/jntugv-enhanced.png" onError={(e) => { e.target.src = '/library-building.jpg'; }} alt="JNTU-GV Campus" className="relative w-full h-[300px] md:h-[400px] object-cover rounded-[32px] shadow-2xl border-4 border-white group-hover:scale-[1.02] transition-transform duration-500" />
             </div>
+         </div>
+      </div>
+
+      {/* Mentor & Project Guide Section */}
+      <div className="max-w-7xl mx-auto px-6 pb-20 relative z-10 w-full flex-1">
+         <div className="relative rounded-[40px] bg-gradient-to-br from-white via-slate-50/90 to-cyan-50/40 border border-slate-200/80 shadow-[0_12px_45px_rgba(15,23,42,0.05)] overflow-hidden p-8 md:p-14">
+            
+            {/* Background Grid Pattern (matching reference design) */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#e2e8f0_1px,transparent_1px),linear-gradient(to_bottom,#e2e8f0_1px,transparent_1px)] bg-[size:3.5rem_3.5rem] [mask-image:radial-gradient(ellipse_75%_65%_at_50%_50%,#000_60%,transparent_100%)] opacity-70 pointer-events-none"></div>
+            
+            {/* Ambient Pastel Glows */}
+            <div className="absolute -top-24 -left-24 w-72 h-72 bg-cyan-300/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute -bottom-24 -right-24 w-80 h-80 bg-purple-300/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div className="relative z-10 flex flex-col lg:flex-row items-center gap-10 lg:gap-14">
+               
+               {/* Left Column: Circular Mentor Portrait with Orbit Ring */}
+               <div className="relative shrink-0 flex items-center justify-center">
+                  {/* Subtle Orbit Ring Accent */}
+                  <div className="absolute w-[260px] h-[260px] sm:w-[300px] sm:h-[300px] rounded-full border border-cyan-400/35 pointer-events-none animate-spin-slow"></div>
+                  <div className="absolute -top-1.5 right-6 w-3.5 h-3.5 bg-cyan-400 rounded-full shadow-lg shadow-cyan-400/60"></div>
+                  
+                  {/* Circular Avatar Frame */}
+                  <div className="w-56 h-56 sm:w-64 sm:h-64 rounded-full overflow-hidden border-[6px] border-white shadow-2xl relative z-10 bg-slate-100 ring-4 ring-cyan-200/50 group">
+                     <img 
+                       src="/mentor-jayasuma-square.jpg" 
+                       onError={(e) => { e.target.src = '/mentor-jayasuma.jpg'; }}
+                       alt="Dr. G. Jayasuma - Project Guide & Visionary" 
+                       className="w-full h-full object-cover object-[center_20%] group-hover:scale-105 transition-transform duration-500" 
+                     />
+                  </div>
+               </div>
+
+               {/* Right Column: Name, Designation, Vision Quote & Actions */}
+               <div className="flex-1 space-y-5 text-center lg:text-left">
+                  <div>
+                     <h3 className="text-[32px] sm:text-[42px] font-black text-[#1e293b] tracking-tight leading-tight">
+                        Dr. G. Jayasuma
+                     </h3>
+                     <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 mt-1.5">
+                        <span className="text-[12px] sm:text-[13px] font-black text-[#0284c7] uppercase tracking-[0.2em]">
+                           Project Guide &amp; Visionary
+                        </span>
+                        <span className="hidden sm:inline text-slate-300">•</span>
+                        <span className="text-[12px] sm:text-[13px] font-semibold text-slate-500">
+                           Registrar &amp; Professor of CSE/IT, JNTU-GV
+                        </span>
+                     </div>
+                  </div>
+
+                  {/* Vision Quote with Cyan Mark and Border */}
+                  <div className="relative flex items-start gap-3 sm:gap-4 text-left">
+                     <svg className="w-9 h-9 sm:w-11 sm:h-11 text-cyan-400/80 shrink-0 mt-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                     </svg>
+                     <div className="border-l-2 border-cyan-400/70 pl-4 sm:pl-5 py-0.5 space-y-2">
+                        <p className="text-[15px] sm:text-[16px] text-slate-600 font-medium leading-relaxed italic">
+                           &ldquo;The idea for the <strong className="text-slate-800 font-bold not-italic">Smart Digital Library and Barcode Management System</strong> was born out of a profound commitment to modernize academic resource access and eliminate administrative friction. We envisioned an intelligent, zero-friction learning ecosystem where students and faculty can instantly discover, locate with spatial precision, and borrow books without the overhead of manual tracking and misplaced volumes. By empowering our library with real-time barcode automation, spatial tracking, and seamless self-service, we enable our students to focus purely on innovation, deep research, and academic mastery.&rdquo;
+                        </p>
+                     </div>
+                  </div>
+
+                  {/* LinkedIn Connect Button */}
+                  <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                     <a 
+                       href="https://www.linkedin.com/in/dr-g-jayasuma-b40b9533/" 
+                       target="_blank" 
+                       rel="noopener noreferrer" 
+                       className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#0a66c2] hover:bg-[#004182] text-white font-bold text-sm shadow-lg shadow-blue-500/20 hover:shadow-blue-500/35 hover:-translate-y-0.5 transition-all cursor-pointer"
+                     >
+                        <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                           <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                        </svg>
+                        <span>Connect on LinkedIn</span>
+                     </a>
+                  </div>
+
+               </div>
+
+            </div>
+
+            {/* Mascot in bottom-right corner (faithful to reference screenshot) */}
+            <div className="hidden md:flex absolute bottom-5 right-7 items-center gap-2 pointer-events-none select-none">
+               <div className="px-3 py-1 bg-cyan-500 text-white text-[11px] font-black rounded-full shadow-md shadow-cyan-500/30 flex items-center gap-1">
+                  <span>Hello!</span> 👋
+               </div>
+               <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-400 to-blue-500 p-1.5 shadow-lg shadow-cyan-500/30 flex items-center justify-center text-white text-lg">
+                  🤖
+               </div>
+            </div>
+
          </div>
       </div>
 
