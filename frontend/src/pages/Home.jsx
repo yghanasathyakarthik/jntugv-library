@@ -266,7 +266,7 @@ export default function Home() {
                         </span>
                         <span className="hidden sm:inline text-slate-300">•</span>
                         <span className="text-[12px] sm:text-[13px] font-semibold text-slate-500">
-                           Registrar &amp; Professor of CSE/IT, JNTU-GV
+                           Professor of IT, JNTUGV
                         </span>
                      </div>
                   </div>
@@ -302,15 +302,7 @@ export default function Home() {
 
             </div>
 
-            {/* Mascot in bottom-right corner (faithful to reference screenshot) */}
-            <div className="hidden md:flex absolute bottom-5 right-7 items-center gap-2 pointer-events-none select-none">
-               <div className="px-3 py-1 bg-cyan-500 text-white text-[11px] font-black rounded-full shadow-md shadow-cyan-500/30 flex items-center gap-1">
-                  <span>Hello!</span> 👋
-               </div>
-               <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-400 to-blue-500 p-1.5 shadow-lg shadow-cyan-500/30 flex items-center justify-center text-white text-lg">
-                  🤖
-               </div>
-            </div>
+
 
          </div>
       </div>
