@@ -286,7 +286,7 @@ export default function Home() {
                   {/* LinkedIn Connect Button */}
                   <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                      <a 
-                       href="https://www.linkedin.com/in/dr-g-jayasuma-b40b9533/" 
+                       href="https://www.linkedin.com/in/dr-g-jaya-suma" 
                        target="_blank" 
                        rel="noopener noreferrer" 
                        className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-[#0a66c2] hover:bg-[#004182] text-white font-bold text-sm shadow-lg shadow-blue-500/20 hover:shadow-blue-500/35 hover:-translate-y-0.5 transition-all cursor-pointer"
