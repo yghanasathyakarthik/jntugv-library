@@ -15,15 +15,15 @@ export default function Home() {
                  <img src="/jntugv-logo.png" alt="JNTUGV" className="w-full h-full object-contain " />
               </div>
               <h1 className="text-[22px] sm:text-[28px] font-black text-slate-800 tracking-tight text-center sm:text-left">
-                JNTUGV <span className="text-[#9073fd] block sm:inline">Central Library</span>
+                YSR<span className="text-[#9073fd] block sm:inline">CentralLibrary</span>
               </h1>
            </Link>
            <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3 w-full md:w-auto">
               <a 
                 href="/JNTUGV_Library_App.apk" 
-                download="JNTUGV_Library_App.apk"
+                download="YSRCentralLibrary.apk"
                 className="px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-[14px] transition-all flex items-center gap-1.5 shadow-sm whitespace-nowrap"
-                title="Download Android App APK"
+                title="Download YSRCentralLibrary Android App APK"
               >
                 <Smartphone className="w-4 h-4 text-emerald-600 shrink-0" /> <span>Get App</span>
               </a>
@@ -318,7 +318,7 @@ export default function Home() {
                   <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center border border-white/20">
                      <Library className="w-5 h-5 text-indigo-400" />
                   </div>
-                  <h2 className="text-2xl font-black text-white tracking-tight">JNTUGV <span className="text-indigo-400">Library</span></h2>
+                  <h2 className="text-2xl font-black text-white tracking-tight">YSR<span className="text-indigo-400">CentralLibrary</span></h2>
                </div>
                <h4 className="text-indigo-400 font-bold uppercase tracking-widest text-sm mb-3">Contact Us:</h4>
                <p className="text-slate-400 font-medium leading-relaxed text-sm">
@@ -356,7 +356,7 @@ export default function Home() {
 
                 <div className="text-center md:text-right">
                    <h4 className="text-indigo-400 font-bold uppercase tracking-widest text-sm mb-4">Quick Links</h4>
-                   <a href="/JNTUGV_Library_App.apk" download="JNTUGV_Library_App.apk" className="block text-emerald-400 hover:text-emerald-300 font-bold mb-3 transition-colors">📱 Download Android App (.apk)</a>
+                   <a href="/JNTUGV_Library_App.apk" download="YSRCentralLibrary.apk" className="block text-emerald-400 hover:text-emerald-300 font-bold mb-3 transition-colors">📱 Download Android App (.apk)</a>
                    <Link to="/login" className="block text-slate-400 hover:text-white font-medium mb-3 transition-colors">Student Login</Link>
                    <Link to="/login" className="block text-slate-400 hover:text-white font-medium mb-3 transition-colors">Admin Login</Link>
                    <Link to="#" className="block text-slate-400 hover:text-white font-medium transition-colors">Privacy & Policy</Link>

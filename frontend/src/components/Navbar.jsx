@@ -30,8 +30,8 @@ export default function Navbar() {
           </div>
         )}
         <div>
-          <h1 className="text-2xl font-extrabold text-primary tracking-tight leading-tight">
-            JNTU-GV <br/> Library
+          <h1 className="text-xl font-extrabold text-primary tracking-tight leading-tight">
+            YSRCentralLibrary
           </h1>
           <p className="text-xs text-slate-500 font-bold tracking-widest uppercase mt-2">
             Smart Portal

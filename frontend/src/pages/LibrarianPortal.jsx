@@ -78,7 +78,7 @@ export default function LibrarianPortal() {
       return;
     }
 
-    let csv = `JNTUGV SMART LIBRARY - STUDENT ENGAGEMENT & USAGE MASTER REPORT\n`;
+    let csv = `YSR CENTRAL LIBRARY - STUDENT ENGAGEMENT & USAGE MASTER REPORT\n`;
     csv += `Report Frequency,${timeframeLabel}\n`;
     csv += `Generated On,"${today.toLocaleString()}"\n`;
     csv += `Total Registered Students,${students.length}\n\n`;
@@ -469,7 +469,7 @@ export default function LibrarianPortal() {
     <div className="w-10 h-10 md:w-12 md:h-12 bg-white p-1 md:p-1.5 rounded-xl shrink-0 overflow-hidden border border-[#e2e8f0] shadow-[0_4px_12px_rgba(0,0,0,0.05)] flex items-center justify-center">
       <img src="/jntugv-logo.png" alt="JNTUGV" className="w-full h-full object-contain " />
     </div>
-    <h1 className="text-[18px] font-black text-slate-800 tracking-tight leading-tight block">JNTUGV<br/><span className="text-[#9073fd] text-[11px] uppercase tracking-widest font-bold">Smart Library</span></h1>
+    <h1 className="text-[18px] font-black text-slate-800 tracking-tight leading-tight block">YSR<br/><span className="text-[#9073fd] text-[11px] uppercase tracking-widest font-bold">CentralLibrary</span></h1>
   </div>
   <button onClick={() => setIsMobileMenuOpen(false)} className="md:hidden p-2 text-slate-500 bg-white rounded-lg shadow-sm">
     <X className="w-5 h-5" />
@@ -661,7 +661,7 @@ export default function LibrarianPortal() {
   <div className="md:hidden flex items-center justify-between p-4 bg-white border-b border-slate-200 z-30 shrink-0 shadow-sm">
      <div className="flex items-center gap-3">
        <img src="/jntugv-logo.png" alt="Logo" className="w-8 h-8 object-contain" />
-       <span className="font-black text-slate-800 text-lg">JNTUGV Library</span>
+       <span className="font-black text-slate-800 text-lg">YSRCentralLibrary</span>
      </div>
      <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 text-slate-600 bg-slate-100 rounded-lg">
        <Menu className="w-6 h-6" />

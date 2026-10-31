@@ -24,9 +24,9 @@ export default defineConfig({
       },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: 'Library Management System',
-        short_name: 'Library',
-        description: 'Modern Library Management Application',
+        name: 'YSRCentralLibrary',
+        short_name: 'YSRCentralLibrary',
+        description: 'YSR Central Library - Modern Smart Library Management Application',
         theme_color: '#4f46e5',
         start_url: '/',
         display: 'standalone',

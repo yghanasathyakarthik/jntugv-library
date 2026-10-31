@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">JNTUGV Library</string>
-    <string name="title_activity_main">JNTUGV Library</string>
+    <string name="app_name">YSRCentralLibrary</string>
+    <string name="title_activity_main">YSRCentralLibrary</string>
     <string name="package_name">com.jntugv.library</string>
     <string name="custom_url_scheme">com.jntugv.library</string>
 </resources>
+

@@ -67,7 +67,7 @@ export default function Login() {
               <div className="w-16 h-16 shrink-0 bg-white rounded-2xl shadow-[0_4px_16px_rgba(0,0,0,0.06)] border border-slate-100 overflow-hidden flex items-center justify-center p-1.5">
                  <img src="/jntugv-logo.png" alt="JNTUGV Logo" className="w-full h-full object-contain" />
               </div>
-              <h1 className="text-[30px] font-black text-slate-800 tracking-tight leading-[1.1]">JNTUGV<br/><span className="bg-gradient-to-r from-[#9073fd] to-[#5983ff] bg-clip-text text-transparent">Smart Library</span></h1>
+              <h1 className="text-[28px] font-black text-slate-800 tracking-tight leading-[1.1]">YSR<br/><span className="bg-gradient-to-r from-[#9073fd] to-[#5983ff] bg-clip-text text-transparent">CentralLibrary</span></h1>
             </div>
 
             <div className="flex bg-[#f8f9fa] p-1.5 rounded-[16px] border border-slate-100 mb-8">

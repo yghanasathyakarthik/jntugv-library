@@ -51,7 +51,7 @@ export default function StudentReportModal({ isOpen, onClose, studentData, histo
     const returnedCount = filteredHistory.filter(h => h.status === 'Returned' || h.status === 'Completed').length;
     const activeCount = borrowedCount - returnedCount;
 
-    let csv = `JNTUGV SMART LIBRARY - STUDENT LIBRARY ACTIVITY REPORT\n`;
+    let csv = `YSR CENTRAL LIBRARY - STUDENT LIBRARY ACTIVITY REPORT\n`;
     csv += `Report Type,${timeframeLabel}\n`;
     csv += `Generated Date,"${today.toLocaleString()}"\n\n`;
 

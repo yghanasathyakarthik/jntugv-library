@@ -342,7 +342,7 @@ export default function StudentPortal() {
     <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center border border-indigo-100/50 shadow-sm overflow-hidden">
       <img src="/jntugv-logo.png" alt="Logo" className="w-8 h-8 object-contain" />
     </div>
-    <h2 className="text-[18px] font-black tracking-tight text-slate-800 leading-tight">JNTUGV Central<br/><span className="text-indigo-600 text-[13px] uppercase tracking-widest font-bold">Smart Library</span></h2>
+    <h2 className="text-[18px] font-black tracking-tight text-slate-800 leading-tight">YSR<br/><span className="text-indigo-600 text-[13px] uppercase tracking-widest font-bold">CentralLibrary</span></h2>
   </div>
   <button onClick={() => setIsMobileMenuOpen(false)} className="md:hidden p-2 text-slate-500 bg-slate-100 rounded-lg">
     <X className="w-5 h-5" />
@@ -490,7 +490,7 @@ export default function StudentPortal() {
    <div className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-slate-200 z-30 shrink-0 shadow-sm">
       <div className="flex items-center gap-2.5">
         <img src="/jntugv-logo.png" alt="Logo" className="w-8 h-8 object-contain" />
-        <span className="font-black text-slate-800 text-base">JNTUGV Central</span>
+        <span className="font-black text-slate-800 text-base">YSRCentralLibrary</span>
       </div>
       <div className="flex items-center gap-2">
         <button onClick={() => setNotificationsOpen(!notificationsOpen)} className="p-2 text-slate-600 bg-slate-50 rounded-xl relative">
@@ -528,7 +528,7 @@ export default function StudentPortal() {
   <h2 className="text-[20px] md:text-[28px] font-medium text-slate-800 mb-1 tracking-tight">Good Morning,</h2>
   <h1 className="text-[30px] md:text-[44px] font-black text-slate-900 mb-2 md:mb-4 tracking-tight leading-tight">{studentInfo?.name?.split(' ')[0] || user?.name || 'Karthik'}! <span className="inline-block animate-wave origin-bottom-right">👋</span></h1>
   <p className="text-slate-600 font-medium text-[13px] md:text-[14px] mb-6 md:mb-8 leading-relaxed">
-  Welcome back to JNTUGV Central Library<br className="hidden sm:inline" /> Continue your quest for knowledge.
+  Welcome back to YSRCentralLibrary<br className="hidden sm:inline" /> Continue your quest for knowledge.
   </p>
   <div className="flex flex-wrap gap-3">
   <button onClick={() => { setActiveTab('search'); fetchBooksData(); setIsMobileMenuOpen(false); }} className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-5 py-3 rounded-2xl shadow-[0_8px_20px_rgba(99,102,241,0.3)] transition-all flex items-center gap-2 text-[13px] md:text-[14px] active:scale-95">
